@@ -1,15 +1,18 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
   return posts.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
+    params: { slug: entry.slug },
   }));
 }
 
-const { entry } = Astro.props;
+const { slug } = Astro.params;
+const entry = await getEntry('posts', slug);
+if (!entry) return Astro.redirect('/404');
+
 const { Content, headings } = await entry.render();
 
 // --- 自动字数统计逻辑 ---
