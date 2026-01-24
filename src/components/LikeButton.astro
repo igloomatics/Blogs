@@ -1,0 +1,138 @@
+---
+---
+<div class="like-container">
+    <button id="likeBtn" class="like-button">
+        <span class="text">喜欢本站</span>
+        <div class="count-wrapper">
+            <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            <span id="likeCount" class="count">3605</span>
+        </div>
+    </button>
+</div>
+
+<script>
+    const likeBtn = document.getElementById('likeBtn');
+    const likeCount = document.getElementById('likeCount');
+    const LIKE_STATUS_KEY = 'has_liked_site';
+
+    async function initLike() {
+        // 先检查本地点赞状态
+        if (localStorage.getItem(LIKE_STATUS_KEY)) {
+            likeBtn?.classList.add('liked');
+        }
+
+        try {
+            const response = await fetch('/api/likes');
+            const data = await response.json();
+            if (data.count !== undefined && likeCount) {
+                likeCount.innerText = data.count.toString();
+            }
+        } catch (error) {
+            console.error('Failed to fetch likes:', error);
+        }
+    }
+
+    likeBtn?.addEventListener('click', async () => {
+        if (localStorage.getItem(LIKE_STATUS_KEY)) return;
+
+        try {
+            // 禁用按钮防止重复点击
+            likeBtn.classList.add('loading');
+            
+            const response = await fetch('/api/likes', {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.count !== undefined) {
+                if (likeCount) likeCount.innerText = data.count.toString();
+                localStorage.setItem(LIKE_STATUS_KEY, 'true');
+                likeBtn.classList.add('liked');
+            }
+        } catch (error) {
+            console.error('Failed to post like:', error);
+        } finally {
+            likeBtn.classList.remove('loading');
+        }
+    });
+
+    initLike();
+    document.addEventListener('astro:after-swap', initLike);
+</script>
+
+<style>
+    .like-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .like-button {
+        background: rgba(118, 159, 205, 0.12);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: none;
+        color: var(--text-main);
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .like-button:hover:not(.liked) {
+        background: rgba(118, 159, 205, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .like-button.liked {
+        background: rgba(229, 154, 154, 0.2);
+        color: #d88a8a;
+        cursor: default;
+    }
+
+    .like-button.loading {
+        opacity: 0.7;
+        cursor: wait;
+    }
+
+    .like-button.liked .heart-icon {
+        fill: #d88a8a;
+    }
+
+    .text {
+        letter-spacing: 0.5px;
+        margin-right: 12px;
+    }
+
+    .count-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .heart-icon {
+        width: 16px;
+        height: 16px;
+        fill: rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: block;
+    }
+
+    .count {
+        font-family: monospace;
+        font-size: 1rem;
+        letter-spacing: 0px;
+    }
+
+    .like-button:active:not(.liked) {
+        transform: scale(0.97);
+    }
+</style>

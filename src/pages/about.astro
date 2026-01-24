@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import thisisme from '../assets/thisisme.png';
 
 // 计算运行天数喵
 const startDate = new Date('2026-01-24'); // 你可以在这里修改站点的“生日”
@@ -53,11 +55,12 @@ const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         </details>
         
         <details>
-            <summary>🌷 异次元人设 ...</summary>
+            <summary>🫧 异次元人设 ...</summary>
             <div class="details-content">
-                已 <br>
-                共有 26222 人到访过这里 <br>
-                Bugs fixed: Too many to count.
+                感谢Nano Banana喵
+                <div class="about-image-container">
+                    <Image src={thisisme} alt="异次元人设" class="about-image" />
+                </div>
             </div>
         </details>
 
@@ -80,7 +83,6 @@ const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     <li>🇺🇸 English</li>
                     <li>🇯🇵 日本語 (Learning)</li>
                     <li>🇰🇷 한국어 (Learning)</li>
-                    <li>🐍 Python (?乱入)</li>
                 </ul>
             </div>
         </details>
@@ -130,7 +132,8 @@ const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         margin-bottom: 15px;
         color: #555;
         line-height: 1.7;
-        text-align: justify;
+        text-align: left;
+        word-break: break-word;
     }
 
     .about-section { margin-top: 40px; }
@@ -173,6 +176,19 @@ const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     .details-content li::before {
         content: "•"; color: var(--col-4-dark);
         font-weight: bold; display: inline-block; width: 1em; margin-left: -1em;
+    }
+
+    .about-image-container {
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .about-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(118, 159, 205, 0.15);
+        border: 2px solid #fff;
     }
 
     .stat-number {

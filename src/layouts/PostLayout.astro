@@ -132,7 +132,8 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
         min-width: 0;
         font-size: 1.05rem;
         color: #4a5a6a;
-        text-align: justify;
+        text-align: left;
+        word-break: break-word;
     }
 
     /* --- 纯净版分割线样式喵 --- */
@@ -167,6 +168,32 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
     }
 
     .article-content p { margin-bottom: 20px; }
+
+    /* --- 引用文本样式喵 --- */
+    .article-content blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        background: rgba(185, 215, 234, 0.15);
+        border-left: 5px solid var(--col-3-medium);
+        border-radius: 0 8px 8px 0;
+        color: var(--text-main);
+        font-style: italic;
+    }
+
+    .article-content blockquote p {
+        margin-bottom: 0;
+    }
+
+    /* --- 行内代码样式喵 --- */
+    .article-content :not(pre) > code {
+        background: var(--col-2-light);
+        color: var(--col-4-dark);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9em;
+        font-weight: bold;
+    }
 
     .article-content img {
         max-width: 100%;

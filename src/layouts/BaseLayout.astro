@@ -24,9 +24,6 @@ const { title, activeNav = 'index' } = Astro.props;
     <!-- 引入 KaTeX CSS 喵 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     
-    <!-- 引入不蒜子统计脚本 -->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
     <style is:global>
         :root {
             /* 基础蓝调 */
@@ -230,6 +227,24 @@ const { title, activeNav = 'index' } = Astro.props;
         }
         addCopyButtons();
         document.addEventListener('astro:page-load', addCopyButtons);
+
+        // --- 解决不蒜子统计 +3 问题的黑魔法喵 ---
+        function loadBusuanzi() {
+            // 每次切换页面时，先移除旧脚本（如果存在）
+            const oldScript = document.getElementById('busuanzi-script');
+            if (oldScript) oldScript.remove();
+
+            // 重新创建并插入脚本，强制它重新计算当前页面
+            const script = document.createElement('script');
+            script.id = 'busuanzi-script';
+            script.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
+            script.async = true;
+            document.head.appendChild(script);
+        }
+
+        // 初始加载和每次 Astro 跳转后执行
+        loadBusuanzi();
+        document.addEventListener('astro:after-swap', loadBusuanzi);
     </script>
 </body>
 </html>

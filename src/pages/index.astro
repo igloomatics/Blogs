@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LikeButton from '../components/LikeButton.astro';
 
 // 获取所有文章并按日期倒序排序
 const allPosts = await getCollection('posts');
@@ -35,6 +36,8 @@ const recentPosts = sortedPosts.slice(0, 5);
             ))}
         </ul>
     </section>
+
+    <LikeButton />
 
     <div style="height: 100px;"></div>
 </BaseLayout>
