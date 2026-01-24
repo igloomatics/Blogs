@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import profileImage from '../assets/profile.jpg';
+
 interface Props {
   activeNav?: string;
 }
@@ -22,7 +25,7 @@ const navItems = [
     </div>
 
     <div class="profile">
-        <img src="/profile.jpg" alt="Avatar" class="avatar">
+        <Image src={profileImage} alt="Avatar" class="avatar" width={180} height={180} />
         <div class="site-name">igloos</div>
         <div class="site-desc">Dreaming of rabbits.</div>
     </div>
@@ -73,6 +76,7 @@ const navItems = [
         display: block; margin: 0 auto 15px auto; object-fit: cover;
         transition: transform 0.5s ease; background-color: var(--col-3-medium);
         padding: 0px;
+        image-rendering: -webkit-optimize-contrast;
     }
     .avatar:hover { transform: scale(1.05) rotate(10deg); box-shadow: 0 0 20px rgba(118, 159, 205, 0.5); }
 

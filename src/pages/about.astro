@@ -1,5 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 计算运行天数喵
+const startDate = new Date('2026-01-24'); // 你可以在这里修改站点的“生日”
+const today = new Date();
+const diffTime = Math.abs(today.getTime() - startDate.getTime());
+const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 ---
 
 <BaseLayout title="About | 关于" activeNav="about">
@@ -7,18 +13,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h1>🧊 Hi there, I'm Igloos!</h1>
         
         <p>
-            I'm Azalea Gui, a 4th year CS undergrad at the University of Toronto. I find joy in designing modern web frontends and doing research in machine learning and audio/speech/music signal-processing projects.
+            我叫<a href="https://zh.wikipedia.org/wiki/%E5%86%B0%E5%B1%8B">Igloos</a>, 该单词原意是用雪建造的圆顶小屋。你也可以直接叫我<span class="highlight">冰屋</span>！我不擅长自我介绍，要不此处省略1000字...
         </p>
         <p>
-            I published the <a href="#">FAD toolkit</a> during my last research project on <a href="#">improving the evaluation of generative music</a>.
-            I've also been doing independent research on creating an AI transgender voice training assistant.
+            曾经是数院半吊子，如今正在与大模型交手。被窝爱好者，周末全职在家照料被窝。偶尔也会烤一点难玩的<a href="https://igloomatics.vercel.app/dream">游戏</a>。极懒主义，白日梦冠军，喜欢猫，喜欢像素艺术，喜欢意识流文字。
         </p>
         <p>
-            I also love rhythm games and cats =^･｡･^=
-        </p>
+            对这个世界所知尚浅，永远不会停止思考、探索、创造、共鸣。希望自己能永葆敏锐与好奇(*´∀ ˋ*)。
     </section>
 
     <!-- 折叠详情部分 -->
+
     <section class="about-section">
         <details>
             <summary>🏷 快速认识我 ...</summary>
@@ -30,12 +35,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </ul>
             </div>
         </details>
+
+        <details>
+            <summary>🔮 关于这里 ...</summary>
+            <div class="details-content">
+                <p style="margin-bottom: 10px;">
+                    该站点已运行 <span class="stat-number">{diffDays}</span> 天，共有 <span id="busuanzi_container_site_uv" style="display:none;"><span id="busuanzi_value_site_uv" class="stat-number"></span></span> 人到访过这里。<br>
+                    本人线下无敌社恐，一直非常渴望在互联网上拥有自己的赛博小家(兴奋)！之前也一直喜欢捣鼓一些(乱七八糟的)东西，但只是自娱自乐，如今我可以在这里分享出来啦，践行开源精神！<br>
+                    愿望是能做出有用的、好玩的、有影响力的东西。<br>
+                    前端自己设计，采用Astro框架，Vercel服务器。
+                </p>
+                <ul>
+                    <li>🎼 <a href="#">Music</a></li>
+                    <li>🎮 <a href="#">Game</a></li>
+                </ul>
+            </div>
+        </details>
         
         <details>
-            <summary>🌷 My overall statistics ...</summary>
+            <summary>🌷 异次元人设 ...</summary>
             <div class="details-content">
-                Coding since 2019. <br>
-                Coffee consumed: ∞ cups. <br>
+                已 <br>
+                共有 26222 人到访过这里 <br>
                 Bugs fixed: Too many to count.
             </div>
         </details>
@@ -65,24 +86,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </details>
 
         <details>
-            <summary>⭐ I have experience writing ...</summary>
+            <summary>⭐ 我的技术栈 ...</summary>
             <div class="details-content">
-                React, Vue, TypeScript, PyTorch, TensorFlow, C++, Java... and a lot of dreamy CSS.
+                Git, GitHub, Python, C, C++, Markdown, LaTeX, Matlab, Unity, Godot, Cocos
             </div>
         </details>
 
-        <details>
-            <summary>🔮 关于这个网站 ...</summary>
-            <div class="details-content">
-                <p style="margin-bottom: 10px;">
-                    本人线下无敌社恐，一直非常渴望在互联网上拥有自己的赛博小家(兴奋)！之前也一直喜欢捣鼓一些(乱七八糟的)东西，之前只是自娱自乐，如今我可以在这里分享出来啦，践行开源精神！希望一步步能做出有用的、好玩的、有影响力的东西。
-                </p>
-                <ul>
-                    <li>🎼 <a href="#">Music</a></li>
-                    <li>🎮 <a href="#">Game</a></li>
-                </ul>
-            </div>
-        </details>
+        
 
         <details>
             <summary>🤍 朋友们 ...</summary>
@@ -163,6 +173,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .details-content li::before {
         content: "•"; color: var(--col-4-dark);
         font-weight: bold; display: inline-block; width: 1em; margin-left: -1em;
+    }
+
+    .stat-number {
+        color: var(--col-4-dark);
+        font-weight: bold;
+        font-family: monospace;
+        font-size: 1.1rem;
     }
 
     @keyframes fadeIn {
