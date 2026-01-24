@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/vercel": "^8.0.4",
+    "@astrojs/vercel": "^9.0.4",
     "@upstash/redis": "^1.36.1",
     "@vercel/kv": "^3.0.0",
     "astro": "^5.16.15",

@@ -2,18 +2,19 @@
 import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel'; 
 
 // https://astro.build/config
 export default defineConfig({
+  // 👇👇👇 必须加上这一行！告诉 Astro 我们要用服务器模式 👇👇👇
+  output: 'server', 
+  
   adapter: vercel(),
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
-      // 挑选一个漂亮的主题
       theme: 'one-dark-pro',
-      // 也可以加载自定义主题
       wrap: true,
       },
     },
