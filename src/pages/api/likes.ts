@@ -3,7 +3,7 @@ import { Redis } from '@upstash/redis';
 
 export const prerender = false;
 
-const DEFAULT_COUNT = 3605;
+const DEFAULT_COUNT = 0;
 const KEY = 'blog_likes';
 
 function getRedis(): Redis {
