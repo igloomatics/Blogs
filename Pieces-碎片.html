@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pieces | 碎片</title>
+    
+    <!-- 引入 LXGW Wenkai (霞鹜文楷) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css">
+    
+    <style>
+        /* --- 1. 调色板 --- */
+        :root {
+            --col-1-bg: #F7FBFC; 
+            --col-2-light: #D6E6F2;
+            --col-3-medium: #B9D7EA;
+            --col-4-dark: #769FCD;
+            --accent-glow: #E1F5FE; 
+            --text-main: #546E7A;
+            --text-light: #90A4AE;
+            --nav-width: 260px;
+        }
+
+        /* --- 2. 全局基础 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+        }
+
+        body {
+            background-color: var(--col-1-bg);
+            color: var(--text-main);
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", serif; 
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 50% 40%, #FDFEFF 0%, #D6E6F2 100%);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- 3. 侧边栏 (严格照抄附件代码，不改动任何定位属性) --- */
+        aside {
+            width: var(--nav-width);
+            padding: 30px 30px; 
+            position: fixed;
+            height: 100vh;
+            
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            border-radius: 0; 
+            box-shadow: 2px 0 20px rgba(118, 159, 205, 0.1); 
+        }
+
+        .station-data {
+            font-size: 0.7rem; color: var(--text-light); margin-bottom: 20px; 
+            font-family: monospace; border-bottom: 2px solid var(--col-3-medium);
+            padding-bottom: 10px; letter-spacing: 1px;
+            position: static; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .profile { text-align: center; margin-bottom: 20px; }
+
+        .avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid #fff; outline: 2px solid var(--col-3-medium);
+            box-shadow: 0 0 15px rgba(185, 215, 234, 0.6);
+            display: block; margin: 0 auto 15px auto; object-fit: cover;
+            transition: transform 0.5s ease; background-color: var(--col-3-medium);
+            padding: 12px;
+        }
+        .avatar:hover { transform: scale(1.05) rotate(10deg); box-shadow: 0 0 20px rgba(118, 159, 205, 0.5); }
+
+        .site-name {
+            font-size: 1.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 2px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
+        }
+        .site-desc { font-size: 0.9rem; color: var(--text-light); }
+
+        /* --- 4. 导航 --- */
+        nav ul { list-style: none; margin-top: 0; }
+        nav li { margin-bottom: 8px; }
+
+        nav a {
+            text-decoration: none; color: var(--text-main); font-size: 1rem;
+            display: block; padding: 10px 20px; transition: all 0.3s ease;
+            position: relative; border-radius: 50px; background: transparent; 
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.7); 
+            color: var(--col-4-dark);
+            padding-left: 25px;
+            box-shadow: 0 2px 10px rgba(185, 215, 234, 0.3);
+        }
+
+        /* --- 5. 主内容区 --- */
+        main {
+            flex: 1;
+            margin-left: var(--nav-width);
+            padding: 60px 80px;
+        }
+
+        /* --- 顶部筛选 (横向排列 + 纵向滚动下拉) --- */
+        .filter-header {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* 年份和月份之间的距离 */
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 20;
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+
+        .dropbtn {
+            background: none; border: none;
+            font-size: 1.6rem; font-weight: bold; color: var(--text-main);
+            cursor: pointer; font-family: inherit;
+            padding: 5px 0; transition: color 0.3s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .dropbtn:hover { color: var(--col-4-dark); }
+        
+        /* 下拉菜单容器 */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%; left: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            min-width: 100px;
+            max-height: 200px; /* 限制高度 */
+            overflow-y: auto;  /* 关键：纵向滚动 */
+            box-shadow: 0 5px 15px rgba(118, 159, 205, 0.2);
+            border-radius: 8px;
+            padding: 5px 0;
+            z-index: 100;
+            border: 1px solid var(--col-2-light);
+        }
+        
+        /* 滚动条美化 */
+        .dropdown-content::-webkit-scrollbar { width: 4px; }
+        .dropdown-content::-webkit-scrollbar-thumb { background: var(--col-3-medium); border-radius: 2px; }
+
+        .dropdown-content a {
+            color: var(--text-main); padding: 8px 15px;
+            text-decoration: none; display: block; font-size: 0.95rem;
+        }
+        .dropdown-content a:hover { background-color: var(--col-2-light); color: var(--col-4-dark); }
+        
+        .dropdown:hover .dropdown-content { display: block; }
+
+        /* --- 分割线 (居中 + 间距小) --- */
+        .divider-diamond {
+            display: flex;
+            justify-content: center; /* 居中关键 */
+            align-items: center;
+            gap: 8px; /* 间距调小 */
+            color: #1a3c5e; /* 深蓝色 */
+            font-size: 12px;
+            margin: 20px 0 50px 0;
+            opacity: 0.9;
+        }
+
+        /* --- 碎片列表 --- */
+        .moment-list { display: flex; flex-direction: column; gap: 40px; }
+        .moment-item { display: flex; gap: 20px; animation: fadeIn 0.5s ease; }
+
+        .moment-avatar-box { flex-shrink: 0; }
+        .moment-avatar-img {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 2px solid #fff; box-shadow: 0 2px 8px rgba(118, 159, 205, 0.2);
+            background: #fff; padding: 2px;
+        }
+
+        .moment-main { flex: 1; display: flex; flex-direction: column; }
+        .moment-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .moment-author { font-size: 1.1rem; font-weight: bold; color: #333; }
+        .moment-time { font-size: 0.85rem; color: var(--text-light); }
+
+        .moment-content {
+            background-color: #EEF2F5;
+            border-radius: 12px; padding: 15px 20px;
+            color: #444; font-size: 1rem; line-height: 1.7;
+            text-align: justify; margin-bottom: 12px; position: relative;
+        }
+        .moment-content::before {
+            content: ''; position: absolute; top: 15px; left: -8px;
+            width: 0; height: 0;
+            border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+            border-right: 10px solid #EEF2F5;
+        }
+
+        /* 展开文字按钮 (右下角) */
+        .expand-btn {
+            float: right; /* 浮动到右侧 */
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: var(--col-4-dark);
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        .expand-btn:hover { opacity: 0.7; }
+        /* 清除浮动，撑开高度 */
+        .moment-content::after { content: ""; display: table; clear: both; }
+
+        .moment-footer { display: flex; align-items: center; padding: 0 5px; }
+        .moment-actions { display: flex; gap: 25px; }
+
+        .action-btn {
+            display: flex; align-items: center; gap: 6px;
+            color: var(--text-light); font-size: 0.9rem; cursor: pointer; transition: color 0.2s;
+        }
+        .action-btn:hover { color: var(--col-4-dark); }
+        .action-btn.like:hover { color: #ff6b6b; }
+        .action-btn.like:hover .icon-svg { fill: #ff6b6b; }
+
+        .icon-svg {
+            width: 18px; height: 18px; fill: none; stroke: currentColor;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 下雪 */
+        .snow-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+        }
+        .snowflake {
+            position: absolute; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 4px #FFF, 0 0 8px var(--col-3-medium); 
+            opacity: 0.9; animation: fall linear infinite; filter: blur(1px); 
+        }
+        @keyframes fall {
+            0% { transform: translate(0, -10vh); }
+            100% { transform: translate(20px, 110vh); }
+        }
+
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            aside { 
+                position: relative; width: 100%; height: auto; 
+                padding: 30px; border-right: none;
+                border-bottom: 2px solid var(--col-3-medium);
+            }
+            main { margin-left: 0; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="snow-container" id="snow"></div>
+
+    <div class="layout">
+        <!-- 侧边栏：代码完全一致 -->
+        <aside>
+            <div class="station-data">
+                LOC: DREAM-LAND <br>
+                TIME: 12:00 AM <br>
+                STATUS: GLOWING
+            </div>
+
+            <div class="profile">
+                <img src="https://api.iconify.design/solar:cat-linear.svg?color=%23546E7A" alt="Avatar" class="avatar">
+                <div class="site-name">igloos</div>
+                <div class="site-desc">Dreaming of rabbits.</div>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a href="index.html">❄️ 雪原 / Snowfield</a></li>
+                    <li><a href="#">🕰️ 时光 / Time</a></li>
+                    <li><a href="#" class="active">✨ 碎片 / Pieces</a></li>
+                    <li><a href="#">🐇 梦境 / Dream</a></li>       
+                    <li><a href="#">☁️ 关于 / About</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main>
+            <!-- 1. 顶部筛选 (横向排列) -->
+            <div class="filter-header">
+                <!-- 年份 -->
+                <div class="dropdown">
+                    <button class="dropbtn">2025年</button>
+                    <div class="dropdown-content">
+                        <a href="#">2025年</a>
+                        <a href="#">2024年</a>
+                        <a href="#">2023年</a>
+                    </div>
+                </div>
+
+                <!-- 月份 -->
+                <div class="dropdown">
+                    <button class="dropbtn">12月</button>
+                    <div class="dropdown-content">
+                        <a href="#">全部</a>
+                        <a href="#">12月</a>
+                        <a href="#">11月</a>
+                        <a href="#">10月</a>
+                        <a href="#">09月</a>
+                        <a href="#">08月</a>
+                        <a href="#">07月</a>
+                        <a href="#">06月</a>
+                        <a href="#">05月</a>
+                        <a href="#">04月</a>
+                        <a href="#">03月</a>
+                        <a href="#">02月</a>
+                        <a href="#">01月</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 分割线 (居中，间距小) -->
+            <div class="divider-diamond">
+                <span>◆</span>
+                <span>◆</span>
+                <span>◆</span>
+            </div>
+
+            <!-- 3. 碎片列表 -->
+            <div class="moment-list">
+                
+                <!-- 碎片 1 -->
+                <div class="moment-item">
+                    <div class="moment-avatar-box">
+                        <img src="https://api.iconify.design/solar:user-circle-bold.svg?color=%23769FCD" class="moment-avatar-img" alt="Innei">
+                    </div>
+                    <div class="moment-main">
+                        <div class="moment-header">
+                            <span class="moment-author">Igloos</span>
+                            <span class="moment-time">2026 年 1 月 23 日 星期五</span>
+                        </div>
+                        <div class="moment-content">
+                            关于 AI 创作和手作在 25.11 月发布的文章都会公开：在编写文章时是否使用了 AI 的辅助。<br><br>
+                            可能很多人会反对使用 AI 进行创作，编写博客等等。那么当你看到文章顶部的 AI 声明之后你有权利选择直接关闭。
+                            <!-- 展开按钮 -->
+                            <div class="expand-btn">[查看]</div>
+                        </div>
+                        <div class="moment-footer">
+                            <div class="moment-actions">
+                                <div class="action-btn">
+                                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                    <span>0</span>
+                                </div>
+                                <div class="action-btn like">
+                                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    <span>4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 碎片 2 -->
+                <div class="moment-item">
+                    <div class="moment-avatar-box">
+                         <img src="https://api.iconify.design/solar:user-circle-bold.svg?color=%23769FCD" class="moment-avatar-img" alt="Innei">
+                    </div>
+                    <div class="moment-main">
+                        <div class="moment-header">
+                            <span class="moment-author">Igloos</span>
+                            <span class="moment-time">2025 年 12 月 6 日 星期六</span>
+                        </div>
+                        <div class="moment-content">
+                            希望你能记住我，记住我曾这样存在过。 —— 村上春树
+                            <!-- 展开按钮 -->
+                            <div class="expand-btn">[查看]</div>
+                        </div>
+                        <div class="moment-footer">
+                            <div class="moment-actions">
+                                <div class="action-btn">
+                                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                    <span>1</span>
+                                </div>
+                                <div class="action-btn like">
+                                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    <span>10</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div style="height: 100px;"></div>
+        </main>
+    </div>
+
+    <script>
+        const snowContainer = document.getElementById('snow');
+        function createSnow() {
+            const flake = document.createElement('div');
+            flake.classList.add('snowflake');
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.width = flake.style.height = (Math.random() * 6 + 4) + 'px'; 
+            flake.style.animationDuration = (Math.random() * 5 + 8) + 's'; 
+            flake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowContainer.appendChild(flake);
+            setTimeout(() => flake.remove(), 13000);
+        }
+        setInterval(createSnow, 150);
+    </script>
+</body>
+</html>

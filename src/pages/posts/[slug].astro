@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+
+// --- 自动字数统计逻辑 ---
+const calcWords = (content: string) => {
+  // 匹配中文字符、英文单词和数字
+  const chineseChars = content.match(/[\u4e00-\u9fa5]/g) || [];
+  const englishWords = content.replace(/[\u4e00-\u9fa5]/g, ' ').match(/\b\w+\b/g) || [];
+  return chineseChars.length + englishWords.length;
+};
+
+const displayWords = entry.data.words || calcWords(entry.body).toLocaleString();
+
+// 获取所有文章以计算上一篇和下一篇
+const allPosts = (await getCollection('posts')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+const currentIndex = allPosts.findIndex((post) => post.slug === entry.slug);
+const prevPost = allPosts[currentIndex + 1];
+const nextPost = allPosts[currentIndex - 1];
+---
+
+<PostLayout 
+  title={entry.data.title} 
+  date={entry.data.date} 
+  words={displayWords.toString()} 
+  tags={entry.data.tags}
+>
+  <Content />
+
+  <ul slot="toc" class="toc-list">
+    {headings.map(h => (
+      <li style={`padding-left: ${(h.depth - 2) * 15}px`}>
+        <a href={`#${h.slug}`} class="toc-link">{h.text}</a>
+      </li>
+    ))}
+  </ul>
+
+  <div slot="navigation" style="display: contents;">
+    {prevPost ? (
+      <a href={`/posts/${prevPost.slug}`} class="nav-link prev">
+          <span class="nav-label">← PREVIOUS POST</span>
+          <span class="nav-title">{prevPost.data.title}</span>
+      </a>
+    ) : <div />}
+
+    {nextPost ? (
+      <a href={`/posts/${nextPost.slug}`} class="nav-link next">
+          <span class="nav-label">NEXT POST →</span>
+          <span class="nav-title">{nextPost.data.title}</span>
+      </a>
+    ) : <div />}
+  </div>
+</PostLayout>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | 关于</title>
+    
+    <!-- 引入 LXGW Wenkai (霞鹜文楷) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css">
+    
+    <style>
+        /* --- 1. 调色板：保持蓝色冰原配色 --- */
+        :root {
+            /* 基础蓝调 */
+            --col-1-bg: #F7FBFC; 
+            --col-2-light: #D6E6F2;
+            --col-3-medium: #B9D7EA;
+            --col-4-dark: #769FCD;
+
+            /* 冰晶发光色 */
+            --accent-glow: #E1F5FE; 
+
+            /* 文字颜色 */
+            --text-main: #546E7A;
+            --text-light: #90A4AE;
+
+            /* 【严格保持】侧边栏宽度 */
+            --nav-width: 260px;
+        }
+
+        /* --- 2. 全局基础 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+            -webkit-text-fill-color: var(--col-4-dark);
+        }
+        
+        ::-moz-selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+        }
+
+        body {
+            background-color: var(--col-1-bg);
+            color: var(--text-main);
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", serif; 
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 50% 40%, #FDFEFF 0%, #D6E6F2 100%);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- 3. 侧边栏 (与 Time 页保持完全一致) --- */
+        aside {
+            width: var(--nav-width);
+            padding: 30px 30px; 
+            position: fixed;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            border-radius: 0; 
+            box-shadow: 2px 0 20px rgba(118, 159, 205, 0.1); 
+        }
+
+        .station-data {
+            font-size: 0.7rem; color: var(--text-light); margin-bottom: 20px; 
+            font-family: monospace; border-bottom: 2px solid var(--col-3-medium);
+            padding-bottom: 10px; letter-spacing: 1px;
+            position: static; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .profile { text-align: center; margin-bottom: 20px; }
+
+        .avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid #fff; outline: 2px solid var(--col-3-medium);
+            box-shadow: 0 0 15px rgba(185, 215, 234, 0.6);
+            display: block; margin: 0 auto 15px auto; object-fit: cover;
+            transition: transform 0.5s ease; background-color: var(--col-3-medium);
+            padding: 12px;
+        }
+        .avatar:hover { transform: scale(1.05) rotate(10deg); box-shadow: 0 0 20px rgba(118, 159, 205, 0.5); }
+
+        .site-name {
+            font-size: 1.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 2px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
+        }
+        .site-desc { font-size: 0.9rem; color: var(--text-light); }
+
+        /* --- 4. 导航 (样式已修改为 Time 页样式) --- */
+        nav ul { list-style: none; margin-top: 0; }
+        nav li { margin-bottom: 8px; }
+
+        nav a {
+            text-decoration: none; color: var(--text-main); font-size: 1rem;
+            display: block; padding: 10px 20px; transition: all 0.3s ease;
+            position: relative; border-radius: 50px; background: transparent; 
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.7); 
+            color: var(--col-4-dark);
+            padding-left: 25px; /* 恢复位移效果 */
+            box-shadow: 0 2px 10px rgba(185, 215, 234, 0.3);
+        }
+
+        /* --- 5. 主内容区 --- */
+        main {
+            flex: 1;
+            margin-left: var(--nav-width);
+            padding: 60px 80px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            font-size: 1rem; 
+            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        /* --- 新增：About页面专用样式 --- */
+
+        /* 蓝色外链样式 (仿图三) */
+        .link-blue {
+            color: var(--col-4-dark); /* 蓝色字体 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 3px solid var(--col-3-medium); /* 蓝色下划线 */
+            padding-bottom: 1px;
+            transition: all 0.3s;
+        }
+        .link-blue:hover {
+            background-color: rgba(214, 230, 242, 0.3);
+            border-bottom-color: var(--col-4-dark);
+        }
+
+        /* 折叠列表样式 */
+        .about-section { margin-top: 40px; }
+
+        details {
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        details[open] {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(185, 215, 234, 0.2);
+        }
+
+        summary {
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-main);
+            padding: 12px 15px;
+            list-style: none; /* 隐藏默认三角 */
+            user-select: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        summary::-webkit-details-marker { display: none; } /* 兼容 */
+        summary:hover { color: var(--col-4-dark); }
+
+        .details-content {
+            padding: 5px 20px 20px 45px;
+            color: var(--text-main);
+            font-size: 1rem;
+            animation: fadeIn 0.4s ease;
+        }
+        .details-content ul { list-style: none; }
+        .details-content li { margin-bottom: 8px; }
+        .details-content li::before {
+            content: "•"; color: var(--col-4-dark);
+            font-weight: bold; display: inline-block; width: 1em; margin-left: -1em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 下雪特效 --- */
+        .snow-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+        }
+        .snowflake {
+            position: absolute; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 4px #FFF, 0 0 8px var(--col-3-medium); 
+            opacity: 0.9; animation: fall linear infinite; filter: blur(1px); 
+        }
+        @keyframes fall {
+            0% { transform: translate(0, -10vh); }
+            100% { transform: translate(20px, 110vh); }
+        }
+
+        /* 移动端 */
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            aside { 
+                position: relative; width: 100%; height: auto; 
+                padding: 30px; border-right: none;
+                border-bottom: 2px solid var(--col-3-medium);
+                border-radius: 0; 
+                background: rgba(255, 255, 255, 0.6);
+                justify-content: flex-start;
+            }
+            .station-data { position: static; margin-bottom: 20px; }
+            main { margin-left: 0; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="snow-container" id="snow"></div>
+
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <aside>
+            <div class="station-data">
+                LOC: DREAM-LAND <br>
+                TIME: 12:00 AM <br>
+                STATUS: GLOWING
+            </div>
+
+            <div class="profile">
+                <!-- 简笔画猫咪 -->
+                <img src="https://api.iconify.design/solar:cat-linear.svg?color=%23546E7A" alt="Avatar" class="avatar">
+                <div class="site-name">igloos</div>
+                <div class="site-desc">Dreaming of rabbits.</div>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a href="index.html">❄️ 雪原 / Snowfield</a></li>
+                    <li><a href="#">🕰️ 时光 / Time</a></li>
+                    <li><a href="#">✨ 碎片 / Pieces</a></li>
+                    <li><a href="#">🐇 梦境 / Dream</a></li>       
+                    <li><a href="#" class="active">☁️ 关于 / About</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main>
+            <!-- Azalea 的简介部分 -->
+            <section>
+                <h1>🧊 Hi there, I'm Igloos!</h1>
+                
+                <p>
+                    I'm Azalea Gui, a 4th year CS undergrad at the University of Toronto. I find joy in designing modern web frontends and doing research in machine learning and audio/speech/music signal-processing projects.
+                </p>
+                <p>
+                    I published the <a href="#" class="link-blue">FAD toolkit</a> during my last research project on <a href="#" class="link-blue">improving the evaluation of generative music</a>.
+                    I've also been doing independent research on creating an AI transgender voice training assistant.
+                </p>
+                <p>
+                    I also love rhythm games and cats =^･｡･^=
+                </p>
+            </section>
+
+            <!-- 折叠详情部分 -->
+            <section class="about-section">
+                <details>
+                    <summary>🏷 快速认识我 ...</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li>人类</li>
+                            <li>INTJ-A</li>
+                            <li>极懒主义</li>
+                        </ul>
+                    </div>
+                </details>
+                
+                
+                <details>
+                    <summary>🌷 My overall statistics ...</summary>
+                    <div class="details-content">
+                        Coding since 2019. <br>
+                        Coffee consumed: ∞ cups. <br>
+                        Bugs fixed: Too many to count.
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🕊️ 在这里捉到我 ...</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li>Email: azalea@example.com</li>
+                            <li>GitHub: @azalea-dev</li>
+                            <li>Twitter: @azalea_dream</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🌎 语言系统 ...</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li>🇨🇳 中文</li>
+                            <li>🇺🇸 English</li>
+                            <li>🇯🇵 日本語 (Learning)</li>
+                            <li>🇰🇷 한국어 (Learning)</li>
+                            <li>🐍 Python (?乱入)</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>⭐ I have experience writing ...</summary>
+                    <div class="details-content">
+                        React, Vue, TypeScript, PyTorch, TensorFlow, C++, Java... and a lot of dreamy CSS.
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🔮 Open-source Everything!</summary>
+                    <div class="details-content">
+                        <p style="margin-bottom: 10px;">
+                            I aim to open-source not only code, but everything I make! This includes hardware projects and other multimedia projects. Check them out!
+                        </p>
+                        <ul>
+                            <li>🎼 <a href="#" class="link-blue">Music</a></li>
+                            <li>📎 <a href="#" class="link-blue">Hardware</a></li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🤍 朋友们 ...</summary>
+                    <div class="details-content">
+                        <a href="#" class="link-blue">小羊</a> | <a href="#" class="link-blue">大猫猫</a>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>🌱 Projects I'm currently working on ...</summary>
+                    <div class="details-content">
+                        Building a dream catcher for the web. <br>
+                        Refactoring my sleep schedule.
+                    </div>
+                </details>
+
+            </section>
+
+            <div style="height: 100px;"></div>
+        </main>
+    </div>
+
+    <script>
+        const snowContainer = document.getElementById('snow');
+        function createSnow() {
+            const flake = document.createElement('div');
+            flake.classList.add('snowflake');
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.width = flake.style.height = (Math.random() * 6 + 4) + 'px'; 
+            flake.style.animationDuration = (Math.random() * 5 + 8) + 's'; 
+            flake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowContainer.appendChild(flake);
+            setTimeout(() => flake.remove(), 13000);
+        }
+        setInterval(createSnow, 150);
+    </script>
+</body>
+</html>

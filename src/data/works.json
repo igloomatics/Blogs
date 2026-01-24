@@ -1,0 +1,64 @@
+{
+  "games": [
+    {
+      "title": "尖塔兄弟",
+      "tag": "类幸存者",
+      "image": "https://placehold.co/600x340/B9D7EA/ffffff?text=Rhythm+Quest",
+      "meta": "Oct 2025 • html5",
+      "desc": "杀戮尖塔的同人类幸存者游戏，保留了杀戮尖塔的道具与肉鸽玩法。（其实就是太不舍得尖塔1的鸡煲了）",
+      "link": "https://igloomatics.github.io/SpireSiblings/"
+    },
+    {
+      "title": "A Day in the Life of Death",
+      "tag": "Ludum Dare 52",
+      "image": "https://placehold.co/600x340/769FCD/ffffff?text=Life+of+Death",
+      "meta": "Jan 2023 • 1st Place Overall",
+      "desc": "一个关于死神职业倦怠的叙事冒险游戏。你需要平衡灵魂收割的配额和在公园喂鸽子的时间。",
+      "link": "#"
+    },
+    {
+      "title": "Dice it Up",
+      "tag": "Arcade",
+      "image": "https://placehold.co/600x340/90A4AE/ffffff?text=Dice+it+Up",
+      "meta": "July 2022 • GMTK Jam",
+      "desc": "在这款 Roguelike 游戏中，你的骰子点数决定了敌人的行动。运气也是实力的一部分。",
+      "link": "#"
+    },
+    {
+      "title": "Moonlight Express",
+      "tag": "Puzzle",
+      "image": "https://placehold.co/600x340/D6E6F2/546E7A?text=Moonlight+Express",
+      "meta": "Dec 2021 • Puzzle",
+      "desc": "驾驶一列星际列车，在不同的星球之间运送“美梦”。物理引擎驱动的解谜游戏。",
+      "link": "#"
+    }
+  ],
+  "music": [
+    {
+      "title": "Winter Lullabies",
+      "tag": "EP Album",
+      "image": "https://placehold.co/600x340/B9D7EA/ffffff?text=Winter+Lullabies",
+      "meta": "2024 • Lo-fi / Chill",
+      "desc": "适合在下雪的夜晚独自聆听的 Lo-fi 专辑。包含 4 首曲目，采样了真实的踩雪声。",
+      "link": "#"
+    },
+    {
+      "title": "Crystal Caverns OST",
+      "tag": "OST",
+      "image": "https://placehold.co/600x340/769FCD/ffffff?text=Crystal+Caverns",
+      "meta": "2023 • Ambient / Electronic",
+      "desc": "为同名游戏创作的原声带。使用合成器模拟了冰晶碰撞和地下洞穴的回响。",
+      "link": "#"
+    }
+  ],
+  "others": [
+    {
+      "title": "赛博小家建设中",
+      "tag": "Website",
+      "image": "https://placehold.co/600x340/E1F5FE/546E7A?text=My+Cyber+Home",
+      "meta": "Jan 2026 • Astro",
+      "desc": "正在努力搬运中，以后这里会放一些奇怪的各种发明。",
+      "link": "#"
+    }
+  ]
+}

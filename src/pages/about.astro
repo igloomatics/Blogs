@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About | 关于" activeNav="about">
+    <section>
+        <h1>🧊 Hi there, I'm Igloos!</h1>
+        
+        <p>
+            I'm Azalea Gui, a 4th year CS undergrad at the University of Toronto. I find joy in designing modern web frontends and doing research in machine learning and audio/speech/music signal-processing projects.
+        </p>
+        <p>
+            I published the <a href="#">FAD toolkit</a> during my last research project on <a href="#">improving the evaluation of generative music</a>.
+            I've also been doing independent research on creating an AI transgender voice training assistant.
+        </p>
+        <p>
+            I also love rhythm games and cats =^･｡･^=
+        </p>
+    </section>
+
+    <!-- 折叠详情部分 -->
+    <section class="about-section">
+        <details>
+            <summary>🏷 快速认识我 ...</summary>
+            <div class="details-content">
+                <ul>
+                    <li>人类</li>
+                    <li>INTJ-A</li>
+                    <li>极懒主义</li>
+                </ul>
+            </div>
+        </details>
+        
+        <details>
+            <summary>🌷 My overall statistics ...</summary>
+            <div class="details-content">
+                Coding since 2019. <br>
+                Coffee consumed: ∞ cups. <br>
+                Bugs fixed: Too many to count.
+            </div>
+        </details>
+
+        <details>
+            <summary>🕊️ 在这里捉到我 ...</summary>
+            <div class="details-content">
+                <ul>
+                    <li>Email: azalea@example.com</li>
+                    <li>GitHub: @azalea-dev</li>
+                    <li>Twitter: @azalea_dream</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>🌎 语言系统 ...</summary>
+            <div class="details-content">
+                <ul>
+                    <li>🇨🇳 中文</li>
+                    <li>🇺🇸 English</li>
+                    <li>🇯🇵 日本語 (Learning)</li>
+                    <li>🇰🇷 한국어 (Learning)</li>
+                    <li>🐍 Python (?乱入)</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>⭐ I have experience writing ...</summary>
+            <div class="details-content">
+                React, Vue, TypeScript, PyTorch, TensorFlow, C++, Java... and a lot of dreamy CSS.
+            </div>
+        </details>
+
+        <details>
+            <summary>🔮 关于这个网站 ...</summary>
+            <div class="details-content">
+                <p style="margin-bottom: 10px;">
+                    本人线下无敌社恐，一直非常渴望在互联网上拥有自己的赛博小家(兴奋)！之前也一直喜欢捣鼓一些(乱七八糟的)东西，之前只是自娱自乐，如今我可以在这里分享出来啦，践行开源精神！希望一步步能做出有用的、好玩的、有影响力的东西。
+                </p>
+                <ul>
+                    <li>🎼 <a href="#">Music</a></li>
+                    <li>🎮 <a href="#">Game</a></li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>🤍 朋友们 ...</summary>
+            <div class="details-content">
+                欢迎和大家交换友链QWQ <br>
+                <a href="#">小羊</a> | <a href="#">大猫猫</a>
+            </div> 
+        </details>
+
+        <details>
+            <summary>🌱 Projects I'm currently working on ...</summary>
+            <div class="details-content">
+                Building a dream catcher for the web. <br>
+                Refactoring my sleep schedule.
+            </div>
+        </details>
+    </section>
+
+    <div style="height: 100px;"></div>
+</BaseLayout>
+
+<style>
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    p {
+        font-size: 1rem; 
+        margin-bottom: 15px;
+        color: #555;
+        line-height: 1.7;
+        text-align: justify;
+    }
+
+    .about-section { margin-top: 40px; }
+
+    details {
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    details[open] {
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 15px rgba(185, 215, 234, 0.2);
+    }
+
+    summary {
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--text-main);
+        padding: 12px 15px;
+        list-style: none;
+        user-select: none;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary:hover { color: var(--col-4-dark); }
+
+    .details-content {
+        padding: 5px 20px 20px 45px;
+        color: var(--text-main);
+        font-size: 1rem;
+        animation: fadeIn 0.4s ease;
+    }
+    .details-content ul { list-style: none; }
+    .details-content li { margin-bottom: 8px; }
+    .details-content li::before {
+        content: "•"; color: var(--col-4-dark);
+        font-weight: bold; display: inline-block; width: 1em; margin-left: -1em;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>

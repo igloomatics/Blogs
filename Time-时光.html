@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time | 时光</title>
+    
+    <!-- 引入 LXGW Wenkai (霞鹜文楷) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css">
+    
+    <style>
+        /* --- 1. 调色板 (保持不变) --- */
+        :root {
+            /* 基础蓝调 */
+            --col-1-bg: #F7FBFC; 
+            --col-2-light: #D6E6F2;
+            --col-3-medium: #B9D7EA;
+            --col-4-dark: #769FCD; 
+
+            /* 冰晶发光色 */
+            --accent-glow: #E1F5FE; 
+
+            /* 文字颜色 */
+            --text-main: #546E7A; 
+            --text-light: #90A4AE;
+
+            --nav-width: 260px;
+        }
+
+        /* --- 2. 全局基础 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+        }
+
+        body {
+            background-color: var(--col-1-bg);
+            color: var(--text-main);
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", serif; 
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 50% 40%, #FDFEFF 0%, #D6E6F2 100%);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- 3. 侧边栏 (保持不变) --- */
+        aside {
+            width: var(--nav-width);
+            padding: 30px 30px; 
+            position: fixed;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            border-radius: 0; 
+            box-shadow: 2px 0 20px rgba(118, 159, 205, 0.1); 
+        }
+
+        .station-data {
+            font-size: 0.7rem; color: var(--text-light); margin-bottom: 20px; 
+            font-family: monospace; border-bottom: 2px solid var(--col-3-medium);
+            padding-bottom: 10px; letter-spacing: 1px;
+            position: static; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .profile { text-align: center; margin-bottom: 20px; }
+
+        .avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid #fff; outline: 2px solid var(--col-3-medium);
+            box-shadow: 0 0 15px rgba(185, 215, 234, 0.6);
+            display: block; margin: 0 auto 15px auto; object-fit: cover;
+            transition: transform 0.5s ease; background-color: var(--col-3-medium);
+            padding: 12px;
+        }
+        .avatar:hover { transform: scale(1.05) rotate(10deg); box-shadow: 0 0 20px rgba(118, 159, 205, 0.5); }
+
+        .site-name {
+            font-size: 1.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 2px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9);
+        }
+        .site-desc { font-size: 0.9rem; color: var(--text-light); }
+
+        /* --- 4. 导航 --- */
+        nav ul { list-style: none; margin-top: 0; }
+        nav li { margin-bottom: 8px; }
+
+        nav a {
+            text-decoration: none; color: var(--text-main); font-size: 1rem;
+            display: block; padding: 10px 20px; transition: all 0.3s ease;
+            position: relative; border-radius: 50px; background: transparent; 
+        }
+
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.7); 
+            color: var(--col-4-dark);
+            padding-left: 25px;
+            box-shadow: 0 2px 10px rgba(185, 215, 234, 0.3);
+        }
+
+        /* --- 5. 主内容区 --- */
+        main {
+            flex: 1;
+            margin-left: var(--nav-width);
+            padding: 60px 80px;
+        }
+
+        /* --- Archive (时光页) 样式 --- */
+        
+        /* 年份标题 */
+        .archive-header {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-main); 
+            margin-top: 20px;
+            margin-bottom: 30px;
+            font-family: "LXGW WenKai", serif;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+        }
+        
+        .archive-header span {
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: var(--text-light);
+            margin-left: 5px;
+        }
+
+        /* 列表容器 */
+        .archive-list { list-style: none; width: 100%; }
+
+        /* 单条归档 */
+        .archive-item {
+            display: flex;
+            align-items: baseline; 
+            padding: 12px 0;
+            transition: background-color 0.2s;
+            border-bottom: 1px dashed rgba(185, 215, 234, 0.4); 
+        }
+
+        .archive-item:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+
+        /* 日期 (最左) */
+        .archive-date {
+            font-family: "Courier New", monospace; 
+            font-size: 1.1rem;
+            color: var(--text-main); 
+            font-weight: bold; 
+            width: 80px; 
+            flex-shrink: 0;
+            opacity: 0.9;
+        }
+
+        /* 标题 (中间) */
+        .archive-title {
+            flex: 1; 
+            color: #4a4a4a; 
+            text-decoration: none;
+            font-size: 1.05rem;
+            margin-right: 20px;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+        
+        .archive-title:hover {
+            color: #000000;
+            text-shadow: 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        /* 标签组 (最右) */
+        .archive-tags {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* 单个标签样式 - 修改：方圆角 */
+        .tag {
+            font-size: 0.75rem;
+            color: #B9D7EA; 
+            border: 1px solid #B9D7EA; 
+            /* 修改：调整内边距和圆角，复刻方圆角样式 */
+            padding: 2px 7px;
+            border-radius: 4px; 
+            
+            background-color: transparent;
+            font-family: sans-serif;
+            white-space: nowrap;
+            letter-spacing: 0.5px; /* 稍微增加字间距，更像图片 */
+            transition: all 0.2s ease;
+        }
+        
+        .tag:hover {
+            background-color: rgba(185, 215, 234, 0.2); 
+        }
+
+        /* 下雪特效 */
+        .snow-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+        }
+        .snowflake {
+            position: absolute; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 4px #FFF, 0 0 8px var(--col-3-medium); 
+            opacity: 0.9; animation: fall linear infinite; filter: blur(1px); 
+        }
+        @keyframes fall {
+            0% { transform: translate(0, -10vh); }
+            100% { transform: translate(20px, 110vh); }
+        }
+
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            aside { 
+                position: relative; width: 100%; height: auto; 
+                padding: 30px; border-right: none;
+                border-bottom: 2px solid var(--col-3-medium);
+            }
+            main { margin-left: 0; padding: 30px 20px; }
+            .archive-item { flex-wrap: wrap; }
+            .archive-tags { margin-left: 80px; margin-top: 5px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="snow-container" id="snow"></div>
+
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <aside>
+            <div class="station-data">
+                LOC: DREAM-LAND <br>
+                TIME: 12:00 AM <br>
+                STATUS: GLOWING
+            </div>
+
+            <div class="profile">
+                <img src="https://api.iconify.design/solar:cat-linear.svg?color=%23546E7A" alt="Avatar" class="avatar">
+                <div class="site-name">igloos</div>
+                <div class="site-desc">Dreaming of rabbits.</div>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a href="index.html">❄️ 雪原 / Snowfield</a></li>
+                    <li><a href="#" class="active">🕰️ 时光 / Time</a></li>
+                    <li><a href="#">✨ 碎片 / Pieces</a></li>
+                    <li><a href="#">🐇 梦境 / Dream</a></li>       
+                    <li><a href="#">☁️ 关于 / About</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容 -->
+        <main>
+            
+            <!-- 2025 年份块 -->
+            <div class="archive-header">
+                2025 <span>/ 34 entries</span>
+            </div>
+
+            <ul class="archive-list">
+                
+                <li class="archive-item">
+                    <span class="archive-date">12-30</span>
+                    <a href="#" class="archive-title">2025同人年终总结 ☃️</a>
+                    <div class="archive-tags">
+                        <span class="tag">Yearly</span>
+                        <span class="tag">Fragment</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">12-20</span>
+                    <a href="#" class="archive-title">只需相信生命 会有被庆祝事情</a>
+                    <div class="archive-tags">
+                        <span class="tag">Monthly</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">12-18</span>
+                    <a href="#" class="archive-title">Cloudflare R2图片管理面板部署简记</a>
+                    <div class="archive-tags">
+                        <span class="tag">Guidebook</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">11-29</span>
+                    <a href="#" class="archive-title">翻翻我的包之化妆品更新年报</a>
+                    <div class="archive-tags">
+                        <span class="tag">Pebble</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">11-26</span>
+                    <a href="#" class="archive-title">Nov 26, Random Thoughts</a>
+                    <div class="archive-tags">
+                        <span class="tag">Random Thoughts</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">11-07</span>
+                    <a href="#" class="archive-title">博客四周年，只要真心就可以</a>
+                    <div class="archive-tags">
+                        <span class="tag">Yearly</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">11-04</span>
+                    <a href="#" class="archive-title">请问真的不能带狗进来吗？</a>
+                    <div class="archive-tags">
+                        <span class="tag">Monthly</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">10-29</span>
+                    <a href="#" class="archive-title">关于电影《无可奈何》，实在没办法了！</a>
+                    <div class="archive-tags">
+                        <span class="tag">Media Box</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">10-15</span>
+                    <a href="#" class="archive-title">两次出闲置经历小记</a>
+                    <div class="archive-tags">
+                        <span class="tag">Pebble</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">10-05</span>
+                    <a href="#" class="archive-title">古法手工制作一个粉丝页面，及相关小述</a>
+                    <div class="archive-tags">
+                        <span class="tag">Monthly</span>
+                        <span class="tag">Hugo</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">09-22</span>
+                    <a href="#" class="archive-title">大人，这是我的综艺报告</a>
+                    <div class="archive-tags">
+                        <span class="tag">Media Box</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">09-07</span>
+                    <a href="#" class="archive-title">我的火柴（悲伤，幸福与愿望）</a>
+                    <div class="archive-tags">
+                        <span class="tag">Random Thoughts</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">08-17</span>
+                    <a href="#" class="archive-title">Must I go and empty handed</a>
+                    <div class="archive-tags">
+                        <span class="tag">Random Thoughts</span>
+                    </div>
+                </li>
+
+                <li class="archive-item">
+                    <span class="archive-date">08-15</span>
+                    <a href="#" class="archive-title">这三个月都看了什么书？</a>
+                    <div class="archive-tags">
+                        <span class="tag">Media Box</span>
+                    </div>
+                </li>
+
+            </ul>
+
+            <div style="height: 100px;"></div>
+        </main>
+    </div>
+
+    <script>
+        const snowContainer = document.getElementById('snow');
+        function createSnow() {
+            const flake = document.createElement('div');
+            flake.classList.add('snowflake');
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.width = flake.style.height = (Math.random() * 6 + 4) + 'px'; 
+            flake.style.animationDuration = (Math.random() * 5 + 8) + 's'; 
+            flake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowContainer.appendChild(flake);
+            setTimeout(() => flake.remove(), 13000);
+        }
+        setInterval(createSnow, 150);
+    </script>
+</body>
+</html>

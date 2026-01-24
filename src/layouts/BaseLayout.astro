@@ -1,0 +1,232 @@
+---
+import Sidebar from '../components/Sidebar.astro';
+import Snow from '../components/Snow.astro';
+import AskWidget from '../components/AskWidget.astro';
+
+interface Props {
+  title: string;
+  activeNav?: string;
+}
+
+const { title, activeNav = 'index' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    
+    <!-- 引入 LXGW Wenkai (霞鹜文楷) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css">
+    
+    <!-- 引入 KaTeX CSS 喵 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    
+    <style is:global>
+        :root {
+            /* 基础蓝调 */
+            --col-1-bg: #F7FBFC; 
+            --col-2-light: #D6E6F2;
+            --col-3-medium: #B9D7EA;
+            --col-4-dark: #769FCD;
+
+            /* 冰晶发光色 */
+            --accent-glow: #E1F5FE; 
+
+            /* 文字颜色 */
+            --text-main: #546E7A;
+            --text-light: #90A4AE;
+
+            --nav-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+            -webkit-text-fill-color: var(--col-4-dark);
+        }
+        
+        ::-moz-selection {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--col-4-dark);
+            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+        }
+
+        body {
+            background-color: var(--col-1-bg);
+            color: var(--text-main);
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", serif; 
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 50% 40%, #FDFEFF 0%, #D6E6F2 100%);
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        main {
+            flex: 1;
+            margin-left: var(--nav-width);
+            padding: 60px 80px;
+            position: relative;
+        }
+
+        /* --- 修正后的全局外链样式 --- */
+        main a:not(.tag):not(.nav-link):not(nav a):not(.post-title):not(.archive-title):not(.card-title):not(.toc-link):not(.nav-link):not(.play-icon):not(.dropbtn):not(.dropdown-content a):not(.back-button) {
+            color: var(--col-4-dark);
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 3px solid var(--col-3-medium);
+            padding-bottom: 1px;
+            transition: all 0.2s ease;
+            display: inline; 
+        }
+        
+        main a:not(.tag):not(.nav-link):not(nav a):not(.post-title):not(.archive-title):not(.card-title):not(.toc-link):not(.nav-link):not(.play-icon):not(.dropbtn):not(.dropdown-content a):not(.back-button):hover {
+            background-color: rgba(185, 215, 234, 0.3);
+            border-bottom-color: var(--col-4-dark);
+        }
+
+        /* --- 【统一标准】Tag 样式喵 --- */
+        .tag {
+            font-size: 0.8rem;
+            color: #B9D7EA;
+            border: 1px solid #B9D7EA !important;
+            padding: 2px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            line-height: 1.2;
+            background-color: transparent;
+        }
+
+        .tag:hover {
+            background-color: rgba(185, 215, 234, 0.2);
+            color: var(--col-4-dark);
+            border-color: var(--col-4-dark) !important;
+        }
+
+        .tag.active {
+            background-color: var(--col-4-dark);
+            color: #fff !important;
+            border-color: var(--col-4-dark) !important;
+        }
+
+        /* --- 其他功能性链接重置 --- */
+        .toc-link, .nav-link, .dropbtn, .dropdown-content a, .post-title, .archive-title, .back-button {
+            text-decoration: none !important;
+            border-bottom: none !important;
+        }
+
+        /* --- 数学公式样式修复喵 --- */
+        .katex-display {
+            margin: 1.2em 0 !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5em 0;
+        }
+        
+        .katex-mathml {
+            display: none !important;
+        }
+
+        /* --- 代码块样式 --- */
+        pre {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .copy-code-button {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-code-button:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .copy-code-button.copied { background: var(--col-4-dark); color: #fff; border-color: var(--col-4-dark); }
+
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            main { margin-left: 0; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <Snow />
+    <div class="layout">
+        <Sidebar activeNav={activeNav} />
+        <main>
+            <slot />
+        </main>
+    </div>
+
+    <!-- 提问组件喵 -->
+    <AskWidget />
+
+    <script>
+        const copyButtonLabel = "Copy";
+        document.addEventListener('click', async (e) => {
+            const button = e.target.closest('.copy-code-button');
+            if (!button) return;
+            const pre = button.parentElement;
+            const code = pre.querySelector('code');
+            const text = code ? code.innerText : pre.innerText.replace(button.innerText, '');
+            try {
+                await navigator.clipboard.writeText(text.trim());
+                button.innerText = "Copied!";
+                button.classList.add("copied");
+                setTimeout(() => {
+                    button.innerText = copyButtonLabel;
+                    button.classList.remove("copied");
+                }, 2000);
+            } catch (err) { console.error('Failed to copy: ', err); }
+        });
+
+        function addCopyButtons() {
+            document.querySelectorAll("pre").forEach(codeBlock => {
+                if (codeBlock.querySelector('.copy-code-button')) return;
+                const copyButton = document.createElement("button");
+                copyButton.className = "copy-code-button";
+                copyButton.type = "button";
+                copyButton.innerHTML = copyButtonLabel;
+                codeBlock.appendChild(copyButton);
+            });
+        }
+        addCopyButtons();
+        document.addEventListener('astro:page-load', addCopyButtons);
+    </script>
+</body>
+</html>

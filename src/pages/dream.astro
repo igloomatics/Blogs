@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import works from '../data/works.json';
+---
+
+<BaseLayout title="Dream | 梦境" activeNav="dream">
+    <section class="intro-section">
+        <h1 class="intro-title">Creativity & Dreams 🎮🎵</h1>
+        <p class="intro-desc">
+            这里存放着我构建的虚拟世界。代码是骨架，音乐是灵魂。<br>
+            多年来我参与了许多 Ludum Dare 挑战，试图用像素和音符捕捉那些稍纵即逝的梦境。带上耳机，开始探索吧。
+        </p>
+    </section>
+
+    <!-- 1. 游戏板块 -->
+    {works.games && works.games.length > 0 && (
+        <>
+            <h2 class="section-header">👾 独立游戏 / Games</h2>
+            <div class="gallery-grid">
+                {works.games.map((game) => (
+                    <div class="work-card">
+                        <a href={game.link} class="card-link-wrapper">
+                            <div class="card-image-box">
+                                <span class="card-tag">{game.tag}</span>
+                                <img src={game.image} alt={game.title} class="card-image">
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">{game.title}</div>
+                                <div class="card-meta">{game.meta}</div>
+                                <div class="card-desc">{game.desc}</div>
+                                <div class="play-icon">▶ 了解更多</div>
+                            </div>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </>
+    )}
+
+    <!-- 2. 音乐板块 -->
+    {works.music && works.music.length > 0 && (
+        <>
+            <h2 class="section-header">🎹 音乐创作 / Music</h2>
+            <div class="gallery-grid">
+                {works.music.map((m) => (
+                    <div class="work-card">
+                        <a href={m.link} class="card-link-wrapper">
+                            <div class="card-image-box">
+                                <span class="card-tag">{m.tag}</span>
+                                <img src={m.image} alt={m.title} class="card-image">
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">{m.title}</div>
+                                <div class="card-meta">{m.meta}</div>
+                                <div class="card-desc">{m.desc}</div>
+                                <div class="play-icon">♫ Listen</div>
+                            </div>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </>
+    )}
+
+    <!-- 3. 未分类板块 -->
+    {works.others && works.others.length > 0 && (
+        <>
+            <h2 class="section-header">🔮 奇思妙想 / Others</h2>
+            <div class="gallery-grid">
+                {works.others.map((item) => (
+                    <div class="work-card">
+                        <a href={item.link} class="card-link-wrapper">
+                            <div class="card-image-box">
+                                <span class="card-tag">{item.tag}</span>
+                                <img src={item.image} alt={item.title} class="card-image">
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">{item.title}</div>
+                                <div class="card-meta">{item.meta}</div>
+                                <div class="card-desc">{item.desc}</div>
+                                <div class="play-icon">✦ 查看详情</div>
+                            </div>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </>
+    )}
+
+    <div style="height: 100px;"></div>
+</BaseLayout>
+
+<style>
+    .intro-section { margin-bottom: 50px; }
+    .intro-title {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+        color: var(--text-main);
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+    }
+    .intro-desc {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.8;
+        max-width: 800px;
+    }
+
+    h2.section-header {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        color: var(--text-main);
+        border-left: 5px solid var(--col-4-dark);
+        padding-left: 15px;
+        background: linear-gradient(90deg, rgba(214, 230, 242, 0.4) 0%, transparent 100%);
+        border-radius: 0 8px 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .work-card {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .card-link-wrapper {
+        text-decoration: none !important;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .work-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(118, 159, 205, 0.15);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .card-image-box {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        background-color: var(--col-2-light);
+        position: relative;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .work-card:hover .card-image { transform: scale(1.05); }
+
+    .card-tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(84, 110, 122, 0.85);
+        color: #fff;
+        padding: 4px 10px;
+        font-size: 0.75rem;
+        border-radius: 20px;
+        backdrop-filter: blur(4px);
+        z-index: 2;
+    }
+
+    .card-info { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .card-title { font-size: 1.2rem; font-weight: bold; color: var(--col-4-dark); margin-bottom: 8px; }
+    .card-meta { font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; font-family: monospace; }
+    .card-desc { font-size: 0.95rem; color: #666; line-height: 1.6; }
+
+    .play-icon {
+        margin-top: auto;
+        align-self: flex-start;
+        padding-top: 15px;
+        font-size: 0.9rem;
+        color: var(--col-4-dark);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        opacity: 0.7;
+    }
+    .work-card:hover .play-icon { opacity: 1; }
+
+    @media (max-width: 768px) {
+        .gallery-grid { grid-template-columns: 1fr; }
+    }
+</style>

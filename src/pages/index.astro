@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 获取所有文章并按日期倒序排序
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// 只取前 5 篇显示在首页
+const recentPosts = sortedPosts.slice(0, 5);
+---
+
+<BaseLayout title="igloos | 冰屋" activeNav="index">
+    <section>
+        <h1>Hi, welcome to the dream. ✨</h1>
+        <p>
+            欢迎来到我的<span class="highlight">兔子洞</span>(*´∀`)~♥。这里的时间流速和外面不太一样。你是怎么找到这里的？
+        </p>
+        <p>
+            最近在<span class="highlight">研究睡眠</span>，偶尔也会数一数天上的星星。希望能在这里和你分享每一个柔软的瞬间。
+        </p>
+    </section>
+
+    <section>
+        <h2>🪄 记忆存档 / Memories</h2>
+        
+        <ul class="post-list">
+            {recentPosts.map((post) => (
+                <li class="post-item">
+                    <span class="post-date">{post.data.date}</span>
+                    <a href={`/posts/${post.slug}`} class="post-title">{post.data.title}</a>
+                </li>
+            ))}
+        </ul>
+    </section>
+
+    <div style="height: 100px;"></div>
+</BaseLayout>
+
+<style>
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+    }
+
+    p {
+        font-size: 1rem; 
+        margin-bottom: 15px;
+        color: #555;
+        line-height: 1.7;
+    }
+
+    .highlight {
+        background-color: var(--col-3-medium);
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        box-shadow: 0 0 8px var(--col-3-medium);
+    }
+
+    h2 {
+        font-size: 1.3rem;
+        margin-top: 50px;
+        margin-bottom: 15px;
+        color: var(--text-main);
+        border-left: 5px solid var(--col-4-dark);
+        padding-left: 10px;
+        background: linear-gradient(90deg, rgba(214, 230, 242, 0.4) 0%, transparent 100%);
+        border-radius: 0 8px 8px 0;
+    }
+
+    .post-list {
+        list-style: none;
+        margin-top: 10px;
+    }
+
+    .post-item {
+        display: flex;
+        align-items: baseline; 
+        padding: 10px 0; 
+        border-bottom: 1px dashed var(--col-3-medium); 
+    }
+
+    .post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-date {
+        width: 100px;
+        flex-shrink: 0;
+        color: var(--text-light);
+        font-size: 0.85rem;
+        font-family: monospace;
+        letter-spacing: -0.5px;
+    }
+
+    .post-title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--text-main);
+        text-decoration: none;
+        transition: all 0.2s;
+        line-height: 1.4;
+        border-radius: 4px;
+    }
+
+    .post-title:hover {
+        background-color: #fff;
+        color: var(--col-4-dark);
+        padding: 0 4px;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    @media (max-width: 768px) {
+        .post-item { padding: 12px 0; }
+    }
+</style>

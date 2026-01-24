@@ -1,0 +1,13 @@
+# 必须忽略的文件夹
+node_modules/
+.astro/
+dist/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 环境变量
+.env
+.env.*
+!.env.example

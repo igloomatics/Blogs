@@ -1,0 +1,155 @@
+---
+---
+<div class="ask-widget-container">
+    <!-- 弹出的对话框喵 -->
+    <div class="ask-panel" id="askPanel">
+        <div class="ask-header">
+            <span>✨ 留言板 / Message Box</span>
+            <button class="close-btn" id="closeAsk">×</button>
+        </div>
+        <div class="ask-body">
+            <div class="status-msg">
+                <div class="loading-dots"><span></span><span></span><span></span></div>
+                <p>后端部署中，敬请期待喵...</p>
+            </div>
+            <textarea placeholder="在这里输入你想说的话..." disabled></textarea>
+            <button class="send-btn" disabled>发送</button>
+        </div>
+    </div>
+
+    <!-- 右下角的触发按钮喵 -->
+    <button class="ask-trigger" id="openAsk">
+        向我提问！
+    </button>
+</div>
+
+<style>
+    .ask-widget-container {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+        z-index: 1000;
+        font-family: inherit;
+    }
+
+    /* 触发按钮样式 喵 */
+    .ask-trigger {
+        background-color: var(--col-4-dark);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px 12px 0 12px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(118, 159, 205, 0.3);
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .ask-trigger:hover {
+        transform: translateY(-3px) scale(1.05);
+        background-color: var(--text-main);
+        box-shadow: 0 6px 20px rgba(118, 159, 205, 0.4);
+    }
+
+    /* 面板样式 喵 */
+    .ask-panel {
+        position: absolute;
+        bottom: 60px;
+        right: 0;
+        width: 300px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(118, 159, 205, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .ask-header {
+        background: var(--col-3-medium);
+        color: var(--text-main);
+        padding: 12px 15px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .close-btn {
+        background: none; border: none; color: inherit;
+        font-size: 1.5rem; cursor: pointer; line-height: 1;
+        opacity: 0.6; transition: opacity 0.2s;
+    }
+    .close-btn:hover { opacity: 1; }
+
+    .ask-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+
+    .status-msg {
+        text-align: center; color: var(--text-light); font-size: 0.85rem;
+        padding: 10px 0;
+    }
+
+    .loading-dots { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+    .loading-dots span {
+        width: 6px; height: 6px; background: var(--col-4-dark);
+        border-radius: 50%; animation: blink 1.4s infinite both;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+        0%, 80%, 100% { opacity: 0.2; }
+        40% { opacity: 1; }
+    }
+
+    textarea {
+        width: 100%; height: 100px; padding: 12px;
+        border-radius: 8px; border: 1px solid var(--col-2-light);
+        background: rgba(255, 255, 255, 0.5);
+        resize: none; font-family: inherit; font-size: 0.9rem;
+        outline: none;
+    }
+
+    .send-btn {
+        background: var(--col-3-medium); color: white;
+        border: none; padding: 10px; border-radius: 8px;
+        font-weight: bold; opacity: 0.5; cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+        .ask-widget-container { bottom: 20px; right: 20px; }
+        .ask-panel { width: calc(100vw - 40px); right: 0; }
+    }
+</style>
+
+<script>
+    const setupAskWidget = () => {
+        const openBtn = document.getElementById('openAsk');
+        const closeBtn = document.getElementById('closeAsk');
+        const panel = document.getElementById('askPanel');
+
+        openBtn?.addEventListener('click', () => {
+            if (panel) panel.style.display = 'flex';
+            if (openBtn) openBtn.style.display = 'none';
+        });
+
+        closeBtn?.addEventListener('click', () => {
+            if (panel) panel.style.display = 'none';
+            if (openBtn) openBtn.style.display = 'block';
+        });
+    };
+
+    setupAskWidget();
+    document.addEventListener('astro:after-swap', setupAskWidget);
+</script>
