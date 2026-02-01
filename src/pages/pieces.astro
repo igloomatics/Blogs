@@ -17,17 +17,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         // 替换 'igloos' 为你的 Status Cafe 用户名
         const username = 'igloos';
         
-        fetch(`https://status.cafe/users/${username}/status.json`)
+        fetch(`https://status.cafe/users/${username}/statuses.json`)
           .then( r => r.json() )
           .then( r => {
-            if (!r.content.length) {
+            if (!r.statuses || r.statuses.length === 0) {
               document.getElementById("statuscafe-content").innerHTML = "No status yet."
               return
             }
-            // 格式化显示：作者名 + 表情 + 时间
+            
+            // 显示作者信息
             document.getElementById("statuscafe-username").innerHTML = 
-                `<a href="https://status.cafe/users/${username}" target="_blank">${r.author}</a> ${r.face} <span style="font-weight:normal; font-size: 0.85em; color: #666;">${r.timeAgo}</span>`;
-            document.getElementById("statuscafe-content").innerHTML = r.content;
+                `<a href="https://status.cafe/users/${username}" target="_blank">${r.statuses[0].author}</a> 的所有状态`;
+            
+            // 渲染所有状态
+            const statusesHTML = r.statuses.map(status => `
+              <div class="status-item">
+                <div class="status-header">
+                  <span class="status-face">${status.face}</span>
+                  <span class="status-time">${status.timeAgo}</span>
+                </div>
+                <div class="status-content">${status.content}</div>
+              </div>
+            `).join('');
+            
+            document.getElementById("statuscafe-content").innerHTML = statusesHTML;
           })
           .catch(err => {
               document.getElementById("statuscafe-username").innerHTML = "无法加载状态";
@@ -80,6 +93,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     #statuscafe-content {
         margin: 0;
+        line-height: 1.6;
+    }
+    
+    .status-item {
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    
+    .status-item:last-child {
+        border-bottom: none;
+    }
+    
+    .status-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .status-face {
+        font-size: 1.3em;
+    }
+    
+    .status-time {
+        font-size: 0.85em;
+        color: #666;
+        font-weight: normal;
+    }
+    
+    .status-content {
+        color: #444;
         line-height: 1.6;
     }
 </style>
