@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "16a5d2c2774e0db3",
+        "id": "9de9aeb0d7ec5320",
         "type": "tabs",
         "children": [
           {
-            "id": "4ff7cee968ac5e3e",
+            "id": "13ef33f729ae2e9c",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "src/content/posts/回归RSS/index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
             }
           }
         ]
@@ -90,6 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "src/content/posts/回归RSS/index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "反向链接"
+              "title": "index 的反向链接列表"
             }
           },
           {
@@ -108,11 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "src/content/posts/回归RSS/index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "出链"
+              "title": "index 的出链列表"
             }
           },
           {
@@ -136,12 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "src/content/posts/回归RSS/index.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "大纲"
+              "title": "index 的大纲"
             }
           }
         ]
@@ -161,14 +168,15 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "de01b2dcb1a6a04c",
+  "active": "13ef33f729ae2e9c",
   "lastOpenFiles": [
-    "src/content/posts/回归RSS/回归RSS.md",
+    "src/content/posts/代码测试.md",
+    "src/content/posts/回归RSS/Pasted image 20260302223105.png",
+    "src/content/posts/回归RSS/index.md",
     "src/content/posts/seeing-a-glowing-rabbit.md",
     "src/content/posts/Markdown语法测试.md",
     "src/content/posts/Lean4简介与安装教程.md",
     "src/content/posts/AI科研人网站导航.md",
-    "src/content/posts/回归RSS/Pasted image 20260302223105.png",
     "src/content/posts/回归RSS",
     "README.md"
   ]
