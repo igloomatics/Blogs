@@ -48,7 +48,9 @@ RSS（Really Simple Syndication，简易信息聚合）是一种基于XML的互�
 回归 RSS 的初衷是**精简**与**掌控**。建议初期只订阅最核心的几个独立博客、你最关心的领域的高质量媒体或研究机构。更重要的是，要建立“定期修剪”的习惯：如果一个信源连续几个月都在发水文、标题党，或者让你毫无点击阅读的欲望，请果断退订。RSS 不是用来收集网络垃圾的，而是用来沉淀价值的。
 
 这里提供几个Github上提供的RSS Feed库！
+
 全球RSS库 https://github.com/plenaryapp/awesome-rss-feeds
+
 中文RSS库 https://github.com/weekend-project-space/top-rss-list
 
 
