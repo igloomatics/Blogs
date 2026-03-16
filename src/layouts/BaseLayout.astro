@@ -178,6 +178,66 @@ const { title, activeNav = 'index' } = Astro.props;
         .copy-code-button:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
         .copy-code-button.copied { background: var(--col-4-dark); color: #fff; border-color: var(--col-4-dark); }
 
+        /* --- 自定义光标 --- */
+        @media (pointer: fine) {
+            *, *::before, *::after {
+                cursor: none !important;
+            }
+
+            @keyframes cursor-glow {
+                0%, 100% { box-shadow: 0 0 8px rgba(118, 159, 205, 0.6), 0 0 20px rgba(185, 215, 234, 0.3); }
+                50% { box-shadow: 0 0 12px rgba(118, 159, 205, 0.8), 0 0 28px rgba(185, 215, 234, 0.45); }
+            }
+
+            .cursor-dot {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 10px;
+                height: 10px;
+                background: radial-gradient(circle, #fff 30%, var(--col-3-medium) 100%);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 100000;
+                transform: translate(-50%, -50%);
+                animation: cursor-glow 2s ease-in-out infinite;
+                will-change: left, top;
+            }
+
+            .cursor-ring {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 36px;
+                height: 36px;
+                border: 2px solid var(--col-4-dark);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 99999;
+                transform: translate(-50%, -50%);
+                transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
+                opacity: 0.5;
+                will-change: left, top;
+            }
+
+            .cursor-ring::before { display: none; }
+
+            .cursor-ring.hovering {
+                width: 48px;
+                height: 48px;
+                border-color: var(--col-3-medium);
+                background-color: rgba(185, 215, 234, 0.1);
+                opacity: 0.7;
+            }
+
+            .cursor-ring.clicking {
+                width: 28px;
+                height: 28px;
+                opacity: 0.8;
+                border-color: var(--col-4-dark);
+            }
+        }
+
         @media (max-width: 768px) {
             .layout { flex-direction: column; }
             main { margin-left: 0; padding: 30px 20px; }
@@ -185,6 +245,8 @@ const { title, activeNav = 'index' } = Astro.props;
     </style>
 </head>
 <body>
+    <div class="cursor-ring" aria-hidden="true"></div>
+    <div class="cursor-dot" aria-hidden="true"></div>
     <Snow />
     <div class="layout">
         <Sidebar activeNav={activeNav} />
@@ -227,6 +289,73 @@ const { title, activeNav = 'index' } = Astro.props;
         }
         addCopyButtons();
         document.addEventListener('astro:page-load', addCopyButtons);
+
+        // --- 自定义光标逻辑 ---
+        function initCustomCursor() {
+            const ring = document.querySelector('.cursor-ring');
+            const dot = document.querySelector('.cursor-dot');
+            if (!ring || !dot || !window.matchMedia('(pointer: fine)').matches) return;
+
+            let mouseX = -100, mouseY = -100;
+            let ringX = -100, ringY = -100;
+            let visible = false;
+
+            function moveCursor(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                dot.style.left = mouseX + 'px';
+                dot.style.top = mouseY + 'px';
+                if (!visible) {
+                    ring.style.opacity = '1';
+                    dot.style.opacity = '1';
+                    visible = true;
+                }
+            }
+
+            function animateRing() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                ring.style.left = ringX + 'px';
+                ring.style.top = ringY + 'px';
+                requestAnimationFrame(animateRing);
+            }
+
+            function handleHover() {
+                const interactiveSelectors = 'a, button, [role="button"], input, textarea, select, label, .tag, .copy-code-button, .play-icon';
+                document.addEventListener('mouseover', (e) => {
+                    if (e.target.closest(interactiveSelectors)) {
+                        ring.classList.add('hovering');
+                    }
+                });
+                document.addEventListener('mouseout', (e) => {
+                    if (e.target.closest(interactiveSelectors)) {
+                        ring.classList.remove('hovering');
+                    }
+                });
+            }
+
+            document.addEventListener('mousemove', moveCursor);
+            document.addEventListener('mousedown', () => ring.classList.add('clicking'));
+            document.addEventListener('mouseup', () => ring.classList.remove('clicking'));
+            document.addEventListener('mouseleave', () => {
+                ring.style.opacity = '0';
+                dot.style.opacity = '0';
+                visible = false;
+            });
+            document.addEventListener('mouseenter', () => {
+                ring.style.opacity = '1';
+                dot.style.opacity = '1';
+                visible = true;
+            });
+
+            ring.style.opacity = '0';
+            dot.style.opacity = '0';
+            handleHover();
+            animateRing();
+        }
+
+        initCustomCursor();
+        document.addEventListener('astro:page-load', initCustomCursor);
 
         // --- 解决不蒜子统计 +3 问题的黑魔法喵 ---
         function loadBusuanzi() {
