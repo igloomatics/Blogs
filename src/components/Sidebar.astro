@@ -4,9 +4,20 @@ import profileImage from '../assets/profile.jpg';
 
 interface Props {
   activeNav?: string;
+  mode?: 'nav' | 'toc';
 }
 
-const { activeNav = 'index' } = Astro.props;
+const { activeNav = 'index', mode = 'nav' } = Astro.props;
+
+const beijingTimeFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Shanghai',
+  hour: 'numeric',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true,
+});
+
+const initialBeijingTime = beijingTimeFormatter.format(new Date());
 
 const navItems = [
   { href: "/", label: "🧊 冰屋 / Igloos", id: "index" },
@@ -18,30 +29,63 @@ const navItems = [
 ---
 
 <aside>
-    <div class="station-data">
-        LOC: DREAM-LAND <br>
-        TIME: 12:00 AM <br>
-        STATUS: GLOWING
-    </div>
+    {mode !== 'toc' && (
+        <div class="station-data">
+            LOC: DREAM-LAND <br>
+            TIME: <span id="station-time-beijing">{initialBeijingTime}</span> (UTC+8) <br>
+            STATUS: {activeNav === 'dream' ? 'DREAMING' : 'GLOWING'} <span class="status-glow" aria-hidden="true"></span>
+        </div>
+    )}
 
-    <div class="profile">
-        <Image src={profileImage} alt="Avatar" class="avatar" width={180} height={180} />
-        <div class="site-name">igloos</div>
-        <div class="site-desc">Dreaming of rabbits.</div>
-    </div>
+    {mode !== 'toc' && (
+        <div class="profile">
+            <Image src={profileImage} alt="Avatar" class="avatar" width={180} height={180} />
+            <div class="site-name">igloos</div>
+            <div class="site-desc">Dreaming of rabbits.</div>
+        </div>
+    )}
 
-    <nav>
-        <ul>
-            {navItems.map((item) => (
-                <li>
-                    <a href={item.href} class={activeNav === item.id ? "active" : ""}>
-                        {item.label}
-                    </a>
-                </li>
-            ))}
-        </ul>
-    </nav>
+    {mode === 'toc' ? (
+        <div class="sidebar-toc">
+            <div class="sidebar-toc-title">Catalog / 目录</div>
+            <div class="sidebar-toc-scroll">
+                <slot name="toc" />
+            </div>
+        </div>
+    ) : (
+        <nav>
+            <ul>
+                {navItems.map((item) => (
+                    <li>
+                        <a href={item.href} class={activeNav === item.id ? "active" : ""}>
+                            {item.label}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    )}
 </aside>
+
+<script>
+  const beijingTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Shanghai',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+
+  function tickBeijingTime() {
+    const el = document.getElementById('station-time-beijing');
+    if (!el) return;
+    el.textContent = beijingTimeFormatter.format(new Date());
+  }
+
+  tickBeijingTime();
+  window.setInterval(tickBeijingTime, 1000);
+  document.addEventListener('astro:page-load', tickBeijingTime);
+</script>
 
 <style>
     aside {
@@ -61,24 +105,86 @@ const navItems = [
     }
 
     .station-data {
-        font-size: 0.7rem; color: var(--text-light); margin-bottom: 20px; 
-        font-family: monospace; border-bottom: 2px solid var(--col-3-medium);
+        font-size: 0.7rem; color: var(--text-light); margin-bottom: 20px;
+        font-family: var(--font-body-mixed);
+        border-bottom: 1px dashed rgba(138, 154, 171, 0.35);
         padding-bottom: 10px; letter-spacing: 1px;
         position: static; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        text-align: center;
+    }
+
+    @keyframes status-glow-pulse {
+        0%, 100% {
+            opacity: 0.55;
+            transform: scale(0.85);
+            box-shadow: 0 0 4px rgba(170, 210, 255, 0.5);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.15);
+            box-shadow: 0 0 10px 2px rgba(170, 210, 255, 0.8),
+                        0 0 18px 4px rgba(210, 180, 240, 0.45);
+        }
+    }
+
+    .status-glow {
+        display: inline-block;
+        width: 7px; height: 7px;
+        margin-left: 6px;
+        border-radius: 50%;
+        background: #b4cce4;
+        vertical-align: middle;
+        animation: status-glow-pulse 2.4s ease-in-out infinite;
+        will-change: transform, opacity, box-shadow;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .status-glow { animation: none; opacity: 0.8; }
     }
 
     .profile { text-align: center; margin-bottom: 20px; }
 
+    @keyframes avatar-breathe {
+        0%, 100% {
+            box-shadow:
+                0 0 0 2px rgba(170, 210, 255, 0.35),
+                0 0 12px 2px rgba(170, 210, 255, 0.22),
+                0 0 24px 3px rgba(210, 180, 240, 0.18),
+                0 0 40px 4px rgba(255, 205, 185, 0.1);
+        }
+        50% {
+            box-shadow:
+                0 0 0 3px rgba(210, 180, 240, 0.55),
+                0 0 22px 4px rgba(170, 210, 255, 0.45),
+                0 0 44px 8px rgba(210, 180, 240, 0.35),
+                0 0 70px 12px rgba(255, 205, 185, 0.22);
+        }
+    }
+
     .avatar {
         width: 90px; height: 90px; border-radius: 50%;
-        border: 3px solid #fff; outline: 2px solid var(--col-3-medium);
-        box-shadow: 0 0 15px rgba(185, 215, 234, 0.6);
+        border: 3px solid #fff;
         display: block; margin: 0 auto 15px auto; object-fit: cover;
-        transition: transform 0.5s ease; background-color: var(--col-3-medium);
+        background-color: #fff;
         padding: 0px;
         image-rendering: -webkit-optimize-contrast;
+        animation: avatar-breathe 5s ease-in-out infinite;
+        transition: transform 0.5s ease, box-shadow 0.4s ease;
+        will-change: box-shadow;
     }
-    .avatar:hover { transform: scale(1.05) rotate(10deg); box-shadow: 0 0 20px rgba(118, 159, 205, 0.5); }
+    .avatar:hover {
+        transform: scale(1.05) rotate(10deg);
+        animation-play-state: paused;
+        box-shadow:
+            0 0 0 4px rgba(210, 180, 240, 0.7),
+            0 0 28px 6px rgba(170, 210, 255, 0.55),
+            0 0 56px 12px rgba(210, 180, 240, 0.45),
+            0 0 90px 18px rgba(255, 205, 185, 0.3);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .avatar { animation: none; box-shadow: 0 0 0 2px rgba(200, 220, 245, 0.5), 0 0 20px rgba(200, 220, 245, 0.45); }
+    }
 
     .site-name {
         font-size: 1.8rem; font-weight: bold; color: var(--text-main); margin-bottom: 2px;
@@ -102,15 +208,70 @@ const navItems = [
         box-shadow: 0 2px 10px rgba(185, 215, 234, 0.3);
     }
 
+    /* ===== Sidebar TOC mode ===== */
+    .sidebar-toc {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        flex: 1;
+    }
+    .sidebar-toc-title {
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        color: var(--text-light);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed rgba(138, 154, 171, 0.3);
+        font-family: var(--font-body-mixed);
+    }
+    .sidebar-toc-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 4px;
+        margin-right: -4px;
+    }
+    .sidebar-toc-scroll::-webkit-scrollbar { width: 4px; }
+    .sidebar-toc-scroll::-webkit-scrollbar-thumb {
+        background: rgba(160, 170, 210, 0.3);
+        border-radius: 4px;
+    }
+
+    /* Slotted TOC list overrides — the <ul class="toc-list"> comes from [slug].astro */
+    :global(.sidebar-toc .toc-list) { list-style: none; padding: 0; margin: 0; }
+    :global(.sidebar-toc .toc-list li) {
+        margin-bottom: 4px;
+        line-height: 1.45;
+    }
+    :global(.sidebar-toc .toc-link) {
+        color: var(--text-light);
+        font-size: 0.82rem;
+        display: block;
+        padding: 3px 6px;
+        border-radius: 5px;
+        text-decoration: none !important;
+        border-bottom: none !important;
+        padding-bottom: 3px !important;
+        transition: color 0.2s, background 0.2s;
+    }
+    :global(.sidebar-toc .toc-link:hover),
+    :global(.sidebar-toc .toc-link.active) {
+        color: var(--col-4-dark);
+        background: rgba(255, 255, 255, 0.45);
+        text-shadow: none !important;
+    }
+
     @media (max-width: 768px) {
-        aside { 
-            position: relative; width: 100%; height: auto; 
+        aside {
+            position: relative; width: 100%; height: auto;
             padding: 30px; border-right: none;
             border-bottom: 2px solid var(--col-3-medium);
-            border-radius: 0; 
+            border-radius: 0;
             background: rgba(255, 255, 255, 0.6);
             justify-content: flex-start;
         }
         .station-data { position: static; margin-bottom: 20px; }
+        .sidebar-toc { display: none; }
     }
 </style>

@@ -1,0 +1,59 @@
+<div id="igloo-cursor-glow" aria-hidden="true"></div>
+<div id="igloo-cursor" aria-hidden="true"></div>
+
+<script is:inline>
+  (function () {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    const cursor = document.getElementById('igloo-cursor');
+    const glow   = document.getElementById('igloo-cursor-glow');
+    if (!cursor || !glow) return;
+
+    let mouseX = window.innerWidth  / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX, cursorY = mouseY;
+    let glowX   = mouseX, glowY   = mouseY;
+
+    document.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    }, { passive: true });
+
+    document.addEventListener('mousedown', function () { cursor.classList.add('click'); });
+    document.addEventListener('mouseup',   function () { cursor.classList.remove('click'); });
+
+    function animate() {
+      cursorX += (mouseX - cursorX) * 0.28;
+      cursorY += (mouseY - cursorY) * 0.28;
+      glowX   += (mouseX - glowX)   * 0.12;
+      glowY   += (mouseY - glowY)   * 0.12;
+
+      cursor.style.transform = 'translate(' + cursorX + 'px,' + cursorY + 'px) translate(-50%, -50%)';
+      glow.style.transform   = 'translate(' + glowX   + 'px,' + glowY   + 'px) translate(-50%, -50%)';
+
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    function attachHoverStates(root) {
+      root.querySelectorAll('a, button, [role="button"], .btn, input[type="submit"], label[for]').forEach(function (el) {
+        if (el.dataset.iglooCursor) return;
+        el.dataset.iglooCursor = '1';
+        el.addEventListener('mouseenter', function () { cursor.classList.add('link'); });
+        el.addEventListener('mouseleave', function () { cursor.classList.remove('link'); });
+      });
+    }
+    attachHoverStates(document);
+
+    document.addEventListener('astro:page-load', function () { attachHoverStates(document); });
+
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        m.addedNodes.forEach(function (node) {
+          if (node.nodeType === 1) attachHoverStates(node);
+        });
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>

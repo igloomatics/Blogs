@@ -1,0 +1,54 @@
+---
+---
+<div class="stars-container" id="stars" aria-hidden="true"></div>
+
+<script>
+    function initStars() {
+        const container = document.getElementById('stars');
+        if (!container || container.dataset.ready) return;
+        container.dataset.ready = '1';
+
+        const STAR_COUNT = 90;
+        for (let i = 0; i < STAR_COUNT; i++) {
+            const star = document.createElement('span');
+            star.className = 'star';
+            const size = Math.random() * 1.8 + 0.6;
+            star.style.width = star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--twinkle-duration', (Math.random() * 3.5 + 2.5) + 's');
+            star.style.setProperty('--twinkle-delay', (Math.random() * 5).toFixed(2) + 's');
+            star.style.setProperty('--peak-opacity', (Math.random() * 0.55 + 0.3).toFixed(2));
+            container.appendChild(star);
+        }
+    }
+    initStars();
+    document.addEventListener('astro:page-load', initStars);
+</script>
+
+<style is:global>
+    .stars-container {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .stars-container .star {
+        position: absolute;
+        border-radius: 50%;
+        background: #ffffff;
+        opacity: 0;
+        box-shadow: 0 0 4px rgba(220, 220, 255, 0.7);
+        animation: star-twinkle var(--twinkle-duration, 3s) ease-in-out infinite;
+        animation-delay: var(--twinkle-delay, 0s);
+        will-change: opacity, transform;
+    }
+    @keyframes star-twinkle {
+        0%, 100% { opacity: 0; transform: scale(0.6); }
+        50%      { opacity: var(--peak-opacity, 0.6); transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .stars-container .star { animation: none; opacity: var(--peak-opacity, 0.5); }
+    }
+</style>

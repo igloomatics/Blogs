@@ -58,22 +58,37 @@ const recentPosts = sortedPosts.slice(0, 5);
     }
 
     .highlight {
-        background-color: var(--col-3-medium);
-        color: #fff;
-        padding: 2px 6px;
-        border-radius: 4px;
-        box-shadow: 0 0 8px var(--col-3-medium);
+        background: linear-gradient(180deg, transparent 55%, rgba(200, 180, 230, 0.42) 55%, rgba(200, 180, 230, 0.42) 92%, transparent 92%);
+        color: var(--text-main);
+        padding: 0 3px;
+        font-weight: 500;
+        text-shadow: 0 0 10px rgba(200, 180, 230, 0.35);
     }
 
     h2 {
-        font-size: 1.3rem;
-        margin-top: 50px;
-        margin-bottom: 15px;
+        font-size: 1.15rem;
+        margin-top: 60px;
+        margin-bottom: 24px;
         color: var(--text-main);
-        border-left: 5px solid var(--col-4-dark);
-        padding-left: 10px;
-        background: linear-gradient(90deg, rgba(214, 230, 242, 0.4) 0%, transparent 100%);
-        border-radius: 0 8px 8px 0;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        position: relative;
+        padding-bottom: 10px;
+        text-shadow: 0 0 18px rgba(221, 211, 229, 0.6);
+    }
+
+    h2::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 220px;
+        height: 1px;
+        background: linear-gradient(90deg,
+            rgba(180, 160, 200, 0.55) 0%,
+            rgba(180, 200, 220, 0.35) 45%,
+            transparent 100%);
     }
 
     .post-list {
@@ -83,9 +98,18 @@ const recentPosts = sortedPosts.slice(0, 5);
 
     .post-item {
         display: flex;
-        align-items: baseline; 
-        padding: 10px 0; 
-        border-bottom: 1px dashed var(--col-3-medium); 
+        align-items: baseline;
+        padding: 12px 0;
+        border-bottom: 1px dashed rgba(185, 215, 234, 0.4);
+    }
+
+    .post-item:hover {
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 6px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-left: -10px;
+        margin-right: -10px;
     }
 
     .post-item:last-child {
@@ -97,8 +121,6 @@ const recentPosts = sortedPosts.slice(0, 5);
         flex-shrink: 0;
         color: var(--text-light);
         font-size: 0.85rem;
-        font-family: monospace;
-        letter-spacing: -0.5px;
     }
 
     .post-title {
@@ -106,16 +128,13 @@ const recentPosts = sortedPosts.slice(0, 5);
         font-weight: bold;
         color: var(--text-main);
         text-decoration: none;
-        transition: all 0.2s;
+        transition: color 0.2s;
         line-height: 1.4;
-        border-radius: 4px;
     }
 
     .post-title:hover {
-        background-color: #fff;
         color: var(--col-4-dark);
-        padding: 0 4px;
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        text-shadow: none;
     }
 
     @media (max-width: 768px) {

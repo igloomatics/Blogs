@@ -1,14 +1,19 @@
 ---
 import Sidebar from '../components/Sidebar.astro';
 import Snow from '../components/Snow.astro';
+import Stars from '../components/Stars.astro';
 import AskWidget from '../components/AskWidget.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
   activeNav?: string;
+  bodyClass?: string;
+  sidebarMode?: 'nav' | 'toc';
 }
 
-const { title, activeNav = 'index' } = Astro.props;
+const { title, activeNav = 'index', bodyClass = '', sidebarMode = 'nav' } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -18,54 +23,85 @@ const { title, activeNav = 'index' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     
-    <!-- 引入 LXGW Wenkai (霞鹜文楷) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css">
+    <!-- 引入 LXGW Wenkai (霞鹜文楷) 原版 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+
+    <!-- Metropolis：英文/数字（与中文混排时汉字仍走霞鹜文楷） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/metropolis@5.0.11/index.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/metropolis@5.0.11/500.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/metropolis@5.0.11/700.min.css" />
     
     <!-- 引入 KaTeX CSS 喵 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     
     <style is:global>
         :root {
-            /* 基础蓝调 */
-            --col-1-bg: #F7FBFC; 
-            --col-2-light: #D6E6F2;
-            --col-3-medium: #B9D7EA;
-            --col-4-dark: #769FCD;
+            /* 基础色（沿用旧变量名以保证其他页面不破） */
+            --col-1-bg: #eaf1f8;
+            --col-2-light: #d6e3f0;
+            --col-3-medium: #b4c8dc;
+            --col-4-dark: #6b8db4;
 
             /* 冰晶发光色 */
-            --accent-glow: #E1F5FE; 
+            --accent-glow: #eaf4ff;
 
             /* 文字颜色 */
-            --text-main: #546E7A;
-            --text-light: #90A4AE;
+            --text-main: #3a4654;
+            --text-light: #8a9aab;
+
+            /* 纸色（碎片页等手作感组件用） */
+            --paper-cream:  #fdf9f0;
+            --paper-pink:   #fbf0ee;
+            --paper-yellow: #fbf6e3;
+            --paper-mint:   #eef7f0;
+
+            /* 胶带色 */
+            --tape-blue:   rgba(149, 180, 210, 0.55);
+            --tape-peach:  rgba(226, 180, 165, 0.55);
+            --tape-lemon:  rgba(230, 210, 140, 0.55);
+            --tape-lilac:  rgba(190, 170, 210, 0.55);
 
             --nav-width: 260px;
+
+            /* 英文/数字 Metropolis + 中文霞鹜文楷（拉丁由 Metropolis 提供字形，汉字回退到 LXGW） */
+            --font-body-mixed: "Metropolis", "LXGW WenKai", "LXGW WenKai Screen", system-ui, sans-serif;
+        }
+
+        .post-date,
+        .archive-date,
+        .post-meta-date {
+            font-family: var(--font-body-mixed);
+            letter-spacing: 0.02em;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        ::selection {
-            background-color: rgba(255, 255, 255, 0.95);
-            color: var(--col-4-dark);
-            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
-            -webkit-text-fill-color: var(--col-4-dark);
-        }
-        
-        ::-moz-selection {
-            background-color: rgba(255, 255, 255, 0.95);
-            color: var(--col-4-dark);
-            text-shadow: 0 0 5px #fff, 0 0 10px var(--col-3-medium);
+        body {
+            color: var(--text-main);
+            font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            background:
+              radial-gradient(1200px 800px at 15% 10%, rgba(255, 230, 220, 0.25), transparent 60%),
+              radial-gradient(900px 700px at 85% 90%, rgba(200, 220, 245, 0.35), transparent 60%),
+              linear-gradient(180deg, #eaf1f8 0%, #f5ecf2 100%);
+            background-attachment: fixed;
+            position: relative;
         }
 
-        body {
-            background-color: var(--col-1-bg);
-            color: var(--text-main);
-            font-family: "LXGW WenKai Screen", "LXGW WenKai", serif; 
-            line-height: 1.6;
-            background-image: radial-gradient(circle at 50% 40%, #FDFEFF 0%, #D6E6F2 100%);
-            background-attachment: fixed;
-            background-size: cover;
+        /* 全站纸张颗粒质感 */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.22;
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 0.65 0 0 0 0 0.72 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            z-index: 0;
         }
+
+        .layout { position: relative; z-index: 1; }
 
         .layout {
             display: flex;
@@ -81,55 +117,36 @@ const { title, activeNav = 'index' } = Astro.props;
             position: relative;
         }
 
-        /* --- 修正后的全局外链样式 --- */
-        main a:not(.tag):not(.nav-link):not(nav a):not(.post-title):not(.archive-title):not(.card-title):not(.toc-link):not(.nav-link):not(.play-icon):not(.dropbtn):not(.dropdown-content a):not(.back-button) {
-            color: var(--col-4-dark);
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 3px solid var(--col-3-medium);
-            padding-bottom: 1px;
-            transition: all 0.2s ease;
-            display: inline; 
-        }
-        
-        main a:not(.tag):not(.nav-link):not(nav a):not(.post-title):not(.archive-title):not(.card-title):not(.toc-link):not(.nav-link):not(.play-icon):not(.dropbtn):not(.dropdown-content a):not(.back-button):hover {
-            background-color: rgba(185, 215, 234, 0.3);
-            border-bottom-color: var(--col-4-dark);
-        }
-
-        /* --- 【统一标准】Tag 样式喵 --- */
+        /* --- Tag 样式 · 梦幻薰衣草 --- */
         .tag {
-            font-size: 0.8rem;
-            color: #B9D7EA;
-            border: 1px solid #B9D7EA !important;
-            padding: 2px 10px;
-            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #8a95c4;
+            border: 1px solid rgba(160, 170, 210, 0.4) !important;
+            padding: 2px 11px;
+            border-radius: 999px;
             white-space: nowrap;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.06em;
             text-decoration: none !important;
-            transition: all 0.2s ease;
+            transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, text-shadow 0.25s ease;
             display: inline-flex;
             align-items: center;
-            line-height: 1.2;
-            background-color: transparent;
+            line-height: 1.3;
+            background-color: rgba(221, 211, 229, 0.08);
         }
 
         .tag:hover {
-            background-color: rgba(185, 215, 234, 0.2);
-            color: var(--col-4-dark);
-            border-color: var(--col-4-dark) !important;
+            color: #9a8fc2;
+            border-color: rgba(160, 150, 200, 0.7) !important;
+            background-color: rgba(200, 180, 230, 0.18);
+            text-shadow: 0 0 8px rgba(200, 180, 230, 0.55);
+            box-shadow: 0 2px 10px rgba(180, 160, 210, 0.18);
         }
 
         .tag.active {
-            background-color: var(--col-4-dark);
             color: #fff !important;
-            border-color: var(--col-4-dark) !important;
-        }
-
-        /* --- 其他功能性链接重置 --- */
-        .toc-link, .nav-link, .dropbtn, .dropdown-content a, .post-title, .archive-title, .back-button {
-            text-decoration: none !important;
-            border-bottom: none !important;
+            border-color: rgba(154, 143, 194, 0.9) !important;
+            background-color: rgba(154, 143, 194, 0.85);
+            box-shadow: 0 2px 12px rgba(154, 143, 194, 0.35);
         }
 
         /* --- 数学公式样式修复喵 --- */
@@ -178,78 +195,19 @@ const { title, activeNav = 'index' } = Astro.props;
         .copy-code-button:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
         .copy-code-button.copied { background: var(--col-4-dark); color: #fff; border-color: var(--col-4-dark); }
 
-        /* --- 自定义光标 --- */
-        @media (pointer: fine) {
-            *, *::before, *::after {
-                cursor: none !important;
-            }
-
-            @keyframes cursor-glow {
-                0%, 100% { box-shadow: 0 0 8px rgba(118, 159, 205, 0.6), 0 0 20px rgba(185, 215, 234, 0.3); }
-                50% { box-shadow: 0 0 12px rgba(118, 159, 205, 0.8), 0 0 28px rgba(185, 215, 234, 0.45); }
-            }
-
-            .cursor-dot {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 10px;
-                height: 10px;
-                background: radial-gradient(circle, #fff 30%, var(--col-3-medium) 100%);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 100000;
-                transform: translate(-50%, -50%);
-                animation: cursor-glow 2s ease-in-out infinite;
-                will-change: left, top;
-            }
-
-            .cursor-ring {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 36px;
-                height: 36px;
-                border: 2px solid var(--col-4-dark);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 99999;
-                transform: translate(-50%, -50%);
-                transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
-                opacity: 0.5;
-                will-change: left, top;
-            }
-
-            .cursor-ring::before { display: none; }
-
-            .cursor-ring.hovering {
-                width: 48px;
-                height: 48px;
-                border-color: var(--col-3-medium);
-                background-color: rgba(185, 215, 234, 0.1);
-                opacity: 0.7;
-            }
-
-            .cursor-ring.clicking {
-                width: 28px;
-                height: 28px;
-                opacity: 0.8;
-                border-color: var(--col-4-dark);
-            }
-        }
-
         @media (max-width: 768px) {
             .layout { flex-direction: column; }
             main { margin-left: 0; padding: 30px 20px; }
         }
     </style>
 </head>
-<body>
-    <div class="cursor-ring" aria-hidden="true"></div>
-    <div class="cursor-dot" aria-hidden="true"></div>
-    <Snow />
+<body class={bodyClass}>
+    <CustomCursor />
+    {bodyClass.includes('dream-page') ? <Stars /> : <Snow />}
     <div class="layout">
-        <Sidebar activeNav={activeNav} />
+        <Sidebar activeNav={activeNav} mode={sidebarMode}>
+            <slot name="sidebar-toc" slot="toc" />
+        </Sidebar>
         <main>
             <slot />
         </main>
@@ -289,73 +247,6 @@ const { title, activeNav = 'index' } = Astro.props;
         }
         addCopyButtons();
         document.addEventListener('astro:page-load', addCopyButtons);
-
-        // --- 自定义光标逻辑 ---
-        function initCustomCursor() {
-            const ring = document.querySelector('.cursor-ring');
-            const dot = document.querySelector('.cursor-dot');
-            if (!ring || !dot || !window.matchMedia('(pointer: fine)').matches) return;
-
-            let mouseX = -100, mouseY = -100;
-            let ringX = -100, ringY = -100;
-            let visible = false;
-
-            function moveCursor(e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                dot.style.left = mouseX + 'px';
-                dot.style.top = mouseY + 'px';
-                if (!visible) {
-                    ring.style.opacity = '1';
-                    dot.style.opacity = '1';
-                    visible = true;
-                }
-            }
-
-            function animateRing() {
-                ringX += (mouseX - ringX) * 0.15;
-                ringY += (mouseY - ringY) * 0.15;
-                ring.style.left = ringX + 'px';
-                ring.style.top = ringY + 'px';
-                requestAnimationFrame(animateRing);
-            }
-
-            function handleHover() {
-                const interactiveSelectors = 'a, button, [role="button"], input, textarea, select, label, .tag, .copy-code-button, .play-icon';
-                document.addEventListener('mouseover', (e) => {
-                    if (e.target.closest(interactiveSelectors)) {
-                        ring.classList.add('hovering');
-                    }
-                });
-                document.addEventListener('mouseout', (e) => {
-                    if (e.target.closest(interactiveSelectors)) {
-                        ring.classList.remove('hovering');
-                    }
-                });
-            }
-
-            document.addEventListener('mousemove', moveCursor);
-            document.addEventListener('mousedown', () => ring.classList.add('clicking'));
-            document.addEventListener('mouseup', () => ring.classList.remove('clicking'));
-            document.addEventListener('mouseleave', () => {
-                ring.style.opacity = '0';
-                dot.style.opacity = '0';
-                visible = false;
-            });
-            document.addEventListener('mouseenter', () => {
-                ring.style.opacity = '1';
-                dot.style.opacity = '1';
-                visible = true;
-            });
-
-            ring.style.opacity = '0';
-            dot.style.opacity = '0';
-            handleHover();
-            animateRing();
-        }
-
-        initCustomCursor();
-        document.addEventListener('astro:page-load', initCustomCursor);
 
         // --- 解决不蒜子统计 +3 问题的黑魔法喵 ---
         function loadBusuanzi() {

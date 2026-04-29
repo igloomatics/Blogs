@@ -8,8 +8,7 @@ let statuses = [];
 try {
   const response = await fetch(`https://status.cafe/users/${username}.atom`);
   const text = await response.text();
-  
-  // HTML 实体解码函数
+
   function decodeHTMLEntities(text: string): string {
     const entities: Record<string, string> = {
       '&amp;': '&',
@@ -19,62 +18,40 @@ try {
       '&#39;': "'",
       '&apos;': "'"
     };
-    
     let decoded = text.replace(/&[a-z]+;/gi, match => entities[match] || match);
-    decoded = decoded.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)));
-    decoded = decoded.replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
-    
+    decoded = decoded.replace(/&#(\d+);/g, (_m, dec) => String.fromCharCode(parseInt(dec, 10)));
+    decoded = decoded.replace(/&#x([0-9a-f]+);/gi, (_m, hex) => String.fromCharCode(parseInt(hex, 16)));
     return decoded;
   }
-  
-  // 简单的 XML 解析（提取 entry 标签）
+
   const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
   const titleRegex = /<title>([\s\S]*?)<\/title>/;
   const contentRegex = /<content type="html">([\s\S]*?)<\/content>/;
   const updatedRegex = /<updated>(.*?)<\/updated>/;
-  
+
   let match;
   while ((match = entryRegex.exec(text)) !== null) {
     const entry = match[1];
     const titleMatch = entry.match(titleRegex);
     const contentMatch = entry.match(contentRegex);
     const updatedMatch = entry.match(updatedRegex);
-    
+
     if (titleMatch && contentMatch && updatedMatch) {
       const titleText = titleMatch[1];
-      
-      // title 格式: "igloos 🥰 content"
-      // 提取 igloos 之后的第一个字符（表情）
       const afterUsername = titleText.substring(titleText.indexOf('igloos') + 'igloos'.length).trim();
-      // 使用 Array.from 正确处理多字节 emoji
       const chars = Array.from(afterUsername);
       const emoji = chars[0] || '📝';
-      
-      // 从 content 获取完整内容
+
       const content = decodeHTMLEntities(contentMatch[1]);
-      
-      // 格式化时间
       const date = new Date(updatedMatch[1]);
-      const now = new Date();
-      const diffMs = now - date;
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      
-      let timeAgo;
-      if (diffDays === 0) {
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        timeAgo = diffHours === 0 ? '刚刚' : `${diffHours} 小时前`;
-      } else if (diffDays === 1) {
-        timeAgo = '1 天前';
-      } else if (diffDays < 7) {
-        timeAgo = `${diffDays} 天前`;
-      } else {
-        timeAgo = date.toLocaleDateString('zh-CN');
-      }
-      
+
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const dateStr = `${date.getFullYear()} / ${pad(date.getMonth() + 1)} / ${pad(date.getDate())}`;
+
       statuses.push({
         emoji,
         content,
-        timeAgo,
+        dateStr,
         date: date.toISOString()
       });
     }
@@ -82,111 +59,211 @@ try {
 } catch (error) {
   console.error('Failed to fetch Status Cafe feed:', error);
 }
+
+// 四色纸 + 四色胶带轮换
+const paperTints = ['c-cream', 'c-pink', 'c-yellow', 'c-mint'];
+const tapeTints  = ['t-blue', 't-peach', 't-lemon', 't-lilac'];
+
+function variantFor(i: number) {
+  const rots    = ['-1.6deg', '1.4deg', '-0.7deg', '1.1deg', '-1.2deg', '0.6deg'];
+  const tapeRot = ['-3deg',   '4deg',   '1deg',    '-2deg',  '3deg',    '-1deg'];
+  const align   = ['flex-start', 'flex-end', 'center'];
+  return {
+    rot: rots[i % rots.length],
+    tapeRot: tapeRot[i % tapeRot.length],
+    align: align[i % align.length],
+    paper: paperTints[i % paperTints.length],
+    tape:  tapeTints[(i + 1) % tapeTints.length],
+  };
+}
 ---
 
 <BaseLayout title="Pieces | 碎片" activeNav="pieces">
-    <div class="divider-diamond">
-        <span>◆</span><span>◆</span><span>◆</span>
-    </div>
+    <section class="pieces-page">
+        <div class="page-header">fragments · 碎片</div>
+        <h1 class="page-title">贴在墙上的只言片语</h1>
 
-    <!-- Status Cafe Section -->
-    <div id="statuscafe">
-        <div id="statuscafe-content">
+        <div class="feed">
             {statuses.length > 0 ? (
-                statuses.map(status => (
-                    <div class="status-item">
-                        <div class="status-header">
-                            <a href={`https://status.cafe/users/${username}`} target="_blank" class="status-user">igloos</a>
-                            <span class="status-face">{status.emoji}</span>
-                            <span class="status-time">{status.timeAgo}</span>
-                        </div>
-                        <div class="status-content" set:html={status.content}></div>
-                    </div>
-                ))
+                statuses.map((s, i) => {
+                    const v = variantFor(i);
+                    return (
+                        <article
+                            class={`memo ${v.paper} ${v.tape}`}
+                            style={`--rot:${v.rot};--tape-rot:${v.tapeRot};align-self:${v.align};--delay:${i * 0.08}s`}
+                        >
+                            <div class="memo-head">
+                                <a href={`https://status.cafe/users/${username}`} target="_blank" rel="noopener" class="memo-author">
+                                    igloos<span class="emoji">{s.emoji}</span>
+                                </a>
+                                <span class="memo-date">{s.dateStr}</span>
+                            </div>
+                            <div class="memo-body" set:html={s.content}></div>
+                        </article>
+                    );
+                })
             ) : (
-                <p>暂无状态</p>
+                <p class="empty">暂无状态</p>
             )}
         </div>
-    </div>
-
-    <div style="height: 100px;"></div>
+    </section>
 </BaseLayout>
 
 <style>
-    .divider-diamond { display: flex; justify-content: center; align-items: center; gap: 8px; color: #1a3c5e; font-size: 12px; margin: 20px 0 50px 0; opacity: 0.9; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    /* Status Cafe Styles */
-    #statuscafe {
-        margin: 40px 0;
-        position: relative;
-        font-size: 1rem;
-        color: #444;
-        animation: fadeIn 0.5s ease;
+    .pieces-page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 20px 0 80px;
     }
 
-    #statuscafe-content {
-        margin: 0;
-        line-height: 1.6;
+    .page-header {
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        color: var(--text-light);
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 10px;
     }
-    
-    .status-item {
-        padding: 20px 25px;
-        margin-bottom: 25px;
-        /* 磨砂玻璃材质效果 */
-        background-color: rgba(255, 255, 255, 0.45);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 16px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    .page-title {
+        font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+        font-size: 28px;
+        font-weight: 400;
+        color: var(--text-main);
+        text-align: center;
+        margin-bottom: 64px;
+        letter-spacing: 0.02em;
     }
-    
-    .status-item:hover {
-        transform: translateY(-4px);
-        background-color: rgba(255, 255, 255, 0.6);
-        box-shadow: 0 12px 40px rgba(118, 159, 205, 0.15);
-        border-color: rgba(255, 255, 255, 0.8);
+
+    .page-title::before,
+    .page-title::after {
+        content: "✦";
+        margin: 0 12px;
+        font-size: 14px;
+        color: var(--text-light);
+        vertical-align: middle;
     }
-    
-    .status-item:last-child {
-        margin-bottom: 0;
-    }
-    
-    .status-header {
+
+    .feed {
         display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
+        flex-direction: column;
+        gap: 44px;
+        padding: 20px 0;
     }
-    
-    .status-user {
-        font-size: 1.05rem;
-        /* 继承全局 a 标签样式：加粗、颜色、下划线 */
+
+    .memo {
+        position: relative;
+        padding: 28px 32px 26px;
+        border-radius: 3px;
+        box-shadow:
+            0 1px 2px rgba(60, 80, 100, 0.04),
+            0 8px 20px rgba(60, 80, 100, 0.08);
+        line-height: 1.75;
+        max-width: 90%;
+        transform: rotate(var(--rot, 0deg));
+        transition: transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease;
+        animation: memo-drift 0.7s cubic-bezier(.2,.8,.2,1) backwards;
+        animation-delay: var(--delay, 0s);
+        will-change: transform;
     }
-    
-    .status-user:hover {
-        /* 继承全局 hover 效果 */
+
+    .memo:nth-child(3n+1) { max-width: 90%; margin-left: 2%; }
+    .memo:nth-child(3n+2) { max-width: 86%; margin-right: 2%; }
+    .memo:nth-child(3n+3) { max-width: 88%; }
+
+    @keyframes memo-drift {
+        from { opacity: 0; transform: translateY(-12px) rotate(var(--rot, 0deg)); }
+        to   { opacity: 1; transform: translateY(0)    rotate(var(--rot, 0deg)); }
     }
-    
-    .status-face {
-        font-size: 1.3em;
+
+    .memo:hover {
+        transform: rotate(0deg) translateY(-4px);
+        box-shadow:
+            0 2px 4px rgba(60, 80, 100, 0.06),
+            0 16px 32px rgba(60, 80, 100, 0.14);
+        z-index: 5;
     }
-    
-    .status-time {
-        font-size: 0.85em;
-        color: #666;
-        font-weight: normal;
-        margin-left: auto; /* 时间靠右显示，更有设计感 */
+
+    /* 胶带 */
+    .memo::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%) rotate(var(--tape-rot, -2deg));
+        width: 72px;
+        height: 20px;
+        background: var(--tape, var(--tape-blue));
+        border-left:  1px dashed rgba(0, 0, 0, 0.04);
+        border-right: 1px dashed rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
-    
-    .status-content {
-        color: #444;
-        line-height: 1.7;
-        font-variant-numeric: normal;
-        font-feature-settings: normal;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "LXGW WenKai Screen", "LXGW WenKai", sans-serif;
+
+    .memo.c-cream  { background: var(--paper-cream); }
+    .memo.c-pink   { background: var(--paper-pink); }
+    .memo.c-yellow { background: var(--paper-yellow); }
+    .memo.c-mint   { background: var(--paper-mint); }
+
+    .memo.t-blue   { --tape: var(--tape-blue); }
+    .memo.t-peach  { --tape: var(--tape-peach); }
+    .memo.t-lemon  { --tape: var(--tape-lemon); }
+    .memo.t-lilac  { --tape: var(--tape-lilac); }
+
+    .memo-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed rgba(138, 154, 171, 0.25);
+    }
+
+    .memo-author {
+        font-family: var(--font-body-mixed);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        color: var(--col-4-dark);
+        text-decoration: none;
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+        font-weight: 500 !important;
+    }
+    .memo-author:hover { background: transparent !important; }
+    .memo-author .emoji { font-family: initial; margin-left: 6px; }
+
+    .memo-date {
+        font-family: var(--font-body-mixed);
+        font-size: 12px;
+        color: var(--text-light);
+        letter-spacing: 0.04em;
+    }
+
+    .memo-body {
+        font-size: 18px;
+        color: var(--text-main);
+        letter-spacing: 0.02em;
+        font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+    }
+
+    .memo-body :global(a) {
+        color: var(--col-4-dark);
+    }
+
+    .empty {
+        text-align: center;
+        color: var(--text-light);
+        padding: 60px 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .memo { animation: none; }
+    }
+
+    @media (max-width: 768px) {
+        .pieces-page { padding: 10px 0 60px; }
+        .feed { gap: 36px; }
+        .memo { padding: 22px 24px 20px; max-width: 100% !important; margin: 0 !important; }
+        .memo-body { font-size: 16px; }
     }
 </style>
