@@ -63,13 +63,11 @@ const years = Object.keys(postsByYear).sort((a, b) => b.localeCompare(a));
     .archive-item:hover { background-color: rgba(255, 255, 255, 0.6); border-radius: 6px; padding-left: 10px; padding-right: 10px; margin-left: -10px; margin-right: -10px; }
     
     /* 这里的样式同步自首页 index.astro 喵 */
-    .archive-date { 
-        width: 80px; 
-        flex-shrink: 0; 
-        color: var(--text-light); 
-        font-size: 0.85rem; 
-        font-family: monospace; 
-        letter-spacing: -0.5px; 
+    .archive-date {
+        width: 80px;
+        flex-shrink: 0;
+        color: var(--text-light);
+        font-size: 0.85rem;
     }
     
     .archive-title { 
@@ -83,8 +81,9 @@ const years = Object.keys(postsByYear).sort((a, b) => b.localeCompare(a));
         line-height: 1.4;
     }
     
-    .archive-title:hover { 
-        color: var(--col-4-dark); 
+    .archive-title:hover {
+        color: var(--col-4-dark);
+        text-shadow: none;
     }
     
     .archive-tags { display: flex; gap: 6px; flex-shrink: 0; }

@@ -1,205 +1,464 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import works from '../data/works.json';
+
+type Work = {
+  title: string;
+  tag: string;
+  meta: string;
+  desc: string;
+  link: string;
+  image?: string;
+};
+
+// 把 games / music / others 展平，按自定义顺序给星图排位置
+const allWorks: Work[] = [
+  ...(works.games ?? []),
+  ...(works.music ?? []),
+  ...(works.others ?? []),
+];
+
+// 每颗星的画布坐标 (0-100 的百分比) + 是否"亮星"
+// 顺序与 allWorks 对齐
+const layout = [
+  { x: 22, y: 30, large: true  },  // 尖塔兄弟
+  { x: 48, y: 72, large: true  },  // A Day in the Life of Death
+  { x: 28, y: 65, large: false },  // Dice it Up
+  { x: 72, y: 60, large: false },  // Moonlight Express
+  { x: 42, y: 22, large: false },  // Winter Lullabies
+  { x: 58, y: 35, large: false },  // Crystal Caverns OST
+  { x: 82, y: 24, large: false },  // 赛博小家
+];
+
+// 右侧星点把 info 卡翻到左边，避免溢出
+const stars = allWorks.map((w, i) => {
+  const pos = layout[i] ?? { x: 50, y: 50, large: false };
+  return {
+    ...w,
+    ...pos,
+    flip: pos.x > 65,
+  };
+});
+
+// 连线：手动指定几条，让星点之间看起来有星座感
+const constellations = [
+  { x1: 22, y1: 30, x2: 42, y2: 22 },
+  { x1: 42, y1: 22, x2: 58, y2: 35 },
+  { x1: 58, y1: 35, x2: 82, y2: 24 },
+  { x1: 28, y1: 65, x2: 48, y2: 72 },
+  { x1: 48, y1: 72, x2: 72, y2: 60 },
+];
+
+// 背景装饰小星
+const decorStars = [
+  { x: 15, y: 52, size: 3 },
+  { x: 62, y: 48, size: 3 },
+  { x: 40, y: 48, size: 2 },
+  { x: 88, y: 48, size: 3 },
+  { x: 10, y: 18, size: 2 },
+  { x: 92, y: 80, size: 2 },
+];
 ---
 
-<BaseLayout title="Dream | 梦境" activeNav="dream">
-    <section class="intro-section">
-        <h1 class="intro-title">Creativity & Dreams 🎮🎵</h1>
-        <p class="intro-desc">
-            这里存放着我构建的虚拟世界。代码是骨架，音乐是灵魂。<br>
-            多年来我参与了许多 Ludum Dare 挑战，试图用像素和音符捕捉那些稍纵即逝的梦境。带上耳机，开始探索吧。
-        </p>
-    </section>
+<BaseLayout title="Dream | 梦境" activeNav="dream" bodyClass="dream-page">
+    <div class="dream-page">
+        <div class="page-header">dream · 梦境</div>
+        <h1 class="page-title">梦 境 星 图</h1>
+        <div class="page-sub">— hover a star to remember the dream —</div>
 
-    <!-- 1. 游戏板块 -->
-    {works.games && works.games.length > 0 && (
-        <>
-            <h2 class="section-header">👾 独立游戏 / Games</h2>
-            <div class="gallery-grid">
-                {works.games.map((game) => (
-                    <div class="work-card">
-                        <a href={game.link} class="card-link-wrapper">
-                            <div class="card-image-box">
-                                <span class="card-tag">{game.tag}</span>
-                                <img src={game.image} alt={game.title} class="card-image">
-                            </div>
-                            <div class="card-info">
-                                <div class="card-title">{game.title}</div>
-                                <div class="card-meta">{game.meta}</div>
-                                <div class="card-desc">{game.desc}</div>
-                                <div class="play-icon">▶ 了解更多</div>
-                            </div>
-                        </a>
-                    </div>
+        <div class="chart">
+            <svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                {constellations.map((l) => (
+                    <line
+                        x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
+                        stroke="rgba(180,204,228,0.22)"
+                        stroke-width="0.1"
+                        stroke-dasharray="0.4 0.6"
+                    />
                 ))}
-            </div>
-        </>
-    )}
+            </svg>
 
-    <!-- 2. 音乐板块 -->
-    {works.music && works.music.length > 0 && (
-        <>
-            <h2 class="section-header">🎹 音乐创作 / Music</h2>
-            <div class="gallery-grid">
-                {works.music.map((m) => (
-                    <div class="work-card">
-                        <a href={m.link} class="card-link-wrapper">
-                            <div class="card-image-box">
-                                <span class="card-tag">{m.tag}</span>
-                                <img src={m.image} alt={m.title} class="card-image">
-                            </div>
-                            <div class="card-info">
-                                <div class="card-title">{m.title}</div>
-                                <div class="card-meta">{m.meta}</div>
-                                <div class="card-desc">{m.desc}</div>
-                                <div class="play-icon">♫ Listen</div>
-                            </div>
-                        </a>
+            {stars.map((s) => (
+                <a
+                    href={s.link && s.link !== '#' ? s.link : undefined}
+                    class:list={['star-point', s.large && 'large', s.flip && 'flip-left']}
+                    style={`left:${s.x}%;top:${s.y}%;`}
+                    target={s.link && s.link.startsWith('http') ? '_blank' : undefined}
+                    rel={s.link && s.link.startsWith('http') ? 'noopener' : undefined}
+                >
+                    <span class="dot"></span>
+                    <span class="label">{s.title}</span>
+                    <div class="info">
+                        <span class="info-tag">{s.tag}</span>
+                        <h3>{s.title}</h3>
+                        <div class="info-meta-top">{s.meta}</div>
+                        <p>{s.desc}</p>
                     </div>
-                ))}
-            </div>
-        </>
-    )}
+                </a>
+            ))}
 
-    <!-- 3. 未分类板块 -->
-    {works.others && works.others.length > 0 && (
-        <>
-            <h2 class="section-header">🔮 奇思妙想 / Others</h2>
-            <div class="gallery-grid">
-                {works.others.map((item) => (
-                    <div class="work-card">
-                        <a href={item.link} class="card-link-wrapper">
-                            <div class="card-image-box">
-                                <span class="card-tag">{item.tag}</span>
-                                <img src={item.image} alt={item.title} class="card-image">
-                            </div>
-                            <div class="card-info">
-                                <div class="card-title">{item.title}</div>
-                                <div class="card-meta">{item.meta}</div>
-                                <div class="card-desc">{item.desc}</div>
-                                <div class="play-icon">✦ 查看详情</div>
-                            </div>
-                        </a>
-                    </div>
-                ))}
-            </div>
-        </>
-    )}
+            {decorStars.map((s) => (
+                <span
+                    class="decor-star"
+                    style={`left:${s.x}%;top:${s.y}%;width:${s.size}px;height:${s.size}px;`}
+                    aria-hidden="true"
+                ></span>
+            ))}
+        </div>
 
-    <div style="height: 100px;"></div>
+        <div class="legend">
+            <span>N · recent</span>
+            <span>observer · igloos</span>
+            <span>S · archive</span>
+        </div>
+    </div>
 </BaseLayout>
 
-<style>
-    .intro-section { margin-bottom: 50px; }
-    .intro-title {
-        font-size: 2.2rem;
-        margin-bottom: 15px;
-        color: var(--text-main);
-        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
-    }
-    .intro-desc {
-        font-size: 1rem;
-        color: #555;
-        line-height: 1.8;
-        max-width: 800px;
+<style is:global>
+    /* 只在 /dream 生效：换一层星空背景盖住全站的 paper 渐变 */
+    body.dream-page {
+        background:
+            radial-gradient(1400px 900px at 20% 20%, rgba(180, 140, 210, 0.22), transparent 55%),
+            radial-gradient(1100px 700px at 80% 85%, rgba(120, 160, 220, 0.18), transparent 55%),
+            radial-gradient(900px 600px at 60% 40%,  rgba(230, 180, 200, 0.10), transparent 60%),
+            linear-gradient(180deg, #0a0e26 0%, #181439 60%, #2a1a3e 100%) !important;
     }
 
-    h2.section-header {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
-        color: var(--text-main);
-        border-left: 5px solid var(--col-4-dark);
-        padding-left: 15px;
-        background: linear-gradient(90deg, rgba(214, 230, 242, 0.4) 0%, transparent 100%);
-        border-radius: 0 8px 8px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    /* 把 paper 噪点换成闪烁的星点层 */
+    body.dream-page::before {
+        opacity: 1 !important;
+        mix-blend-mode: normal !important;
+        background-image:
+            radial-gradient(1px 1px at 13% 27%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 22% 63%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1.2px 1.2px at 31% 15%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 40% 82%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1.5px 1.5px at 48% 34%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 55% 71%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1px 1px at 63% 22%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1.2px 1.2px at 72% 51%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1px 1px at 81% 88%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 88% 38%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1px 1px at 95% 67%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 17% 45%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1px 1px at 37% 58%, rgba(255,255,255,0.15), transparent),
+            radial-gradient(1.5px 1.5px at 66% 11%, rgba(255,255,255,0.35), transparent),
+            radial-gradient(1px 1px at 77% 29%, rgba(255,255,255,0.15), transparent) !important;
+        animation: dream-twinkle 8s ease-in-out infinite;
     }
 
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-        margin-bottom: 60px;
+    @keyframes dream-twinkle {
+        0%, 100% { opacity: 0.9; }
+        50%      { opacity: 0.55; }
     }
 
-    .work-card {
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        position: relative;
+    /* dream 页主文字色走浅色 */
+    body.dream-page {
+        color: #e5e9f5;
     }
 
-    .card-link-wrapper {
+    /* 主内容区的 a 标签全局规则会给星点加下划线，覆盖掉 */
+    body.dream-page main a.star-point {
+        color: inherit !important;
         text-decoration: none !important;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+        border-bottom: none !important;
+        font-weight: normal !important;
+        padding-bottom: 0 !important;
+    }
+    body.dream-page main a.star-point:hover {
+        background: transparent !important;
     }
 
-    .work-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(118, 159, 205, 0.15);
-        background: rgba(255, 255, 255, 0.8);
+    /* ===== 侧栏在 dream 页反色 ===== */
+    body.dream-page aside {
+        background: rgba(18, 20, 48, 0.42) !important;
+        border-right: 1px solid rgba(180, 204, 228, 0.18) !important;
+        box-shadow: 2px 0 30px rgba(10, 12, 30, 0.4) !important;
     }
 
-    .card-image-box {
+    body.dream-page .station-data {
+        color: #8890b8 !important;
+        border-bottom-color: rgba(180, 204, 228, 0.22) !important;
+        text-shadow: none !important;
+    }
+
+    body.dream-page .status-glow {
+        background: #b4cce4 !important;
+    }
+
+    body.dream-page .site-name {
+        color: #e5e9f5 !important;
+        text-shadow: 0 2px 18px rgba(180, 140, 210, 0.45) !important;
+    }
+
+    body.dream-page .site-desc {
+        color: #8890b8 !important;
+    }
+
+    body.dream-page nav a {
+        color: #c8cce0 !important;
+    }
+
+    body.dream-page nav a:hover,
+    body.dream-page nav a.active {
+        background: rgba(180, 204, 228, 0.14) !important;
+        color: #b4cce4 !important;
+        box-shadow: inset 0 0 0 1px rgba(180, 204, 228, 0.25),
+                    0 2px 12px rgba(10, 12, 30, 0.3) !important;
+    }
+
+    /* 移动端侧栏 */
+    @media (max-width: 768px) {
+        body.dream-page aside {
+            border-bottom: 1px solid rgba(180, 204, 228, 0.2) !important;
+            border-right: none !important;
+        }
+    }
+</style>
+
+<style>
+    .dream-page {
+        --ink:         #e5e9f5;
+        --ink-muted:   #8890b8;
+        --accent:      #b4cce4;
+        --accent-warm: #e8b8c8;
+
+        color: var(--ink);
+        padding-bottom: 80px;
+    }
+
+    .page-header {
+        font-family: var(--font-body-mixed);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+
+    .page-title {
+        font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+        font-size: 32px;
+        font-weight: 400;
+        color: var(--ink);
+        text-align: center;
+        margin-bottom: 10px;
+        letter-spacing: 0.08em;
+    }
+
+    .page-sub {
+        text-align: center;
+        font-family: var(--font-body-mixed);
+        font-size: 11px;
+        color: var(--ink-muted);
+        letter-spacing: 0.15em;
+        margin-bottom: 48px;
+    }
+
+    /* 星图画布 */
+    .chart {
+        position: relative;
         width: 100%;
-        height: 200px;
-        overflow: hidden;
-        background-color: var(--col-2-light);
+        height: 620px;
+        max-width: 900px;
+        margin: 0 auto;
+        border: 1px dashed rgba(180, 204, 228, 0.18);
+        border-radius: 2px;
+    }
+
+    .chart::before,
+    .chart::after {
+        content: "";
+        position: absolute;
+        width: 20px; height: 20px;
+        border: 1px solid rgba(180, 204, 228, 0.35);
+    }
+    .chart::before { top: -1px; left: -1px;  border-right: none; border-bottom: none; }
+    .chart::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+    .chart svg.lines {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* 装饰小星 */
+    .decor-star {
+        position: absolute;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        opacity: 0.65;
+        pointer-events: none;
+    }
+
+    /* 星点 */
+    .star-point {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        display: inline-block;
+    }
+
+    .dot {
+        display: block;
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow:
+            0 0 12px rgba(255, 255, 255, 0.7),
+            0 0 24px rgba(180, 204, 228, 0.5);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         position: relative;
     }
 
-    .card-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
+    .star-point.large .dot {
+        width: 18px; height: 18px;
+        box-shadow:
+            0 0 16px rgba(255, 255, 255, 0.9),
+            0 0 36px rgba(232, 184, 200, 0.5);
     }
 
-    .work-card:hover .card-image { transform: scale(1.05); }
-
-    .card-tag {
+    /* 光环脉动 */
+    .dot::after {
+        content: "";
         position: absolute;
-        top: 10px;
-        left: 10px;
-        background: rgba(84, 110, 122, 0.85);
-        color: #fff;
-        padding: 4px 10px;
-        font-size: 0.75rem;
-        border-radius: 20px;
-        backdrop-filter: blur(4px);
-        z-index: 2;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation: dream-ring 3s ease-in-out infinite;
+    }
+    @keyframes dream-ring {
+        0%, 100% { transform: scale(0.8); opacity: 0.6; }
+        50%      { transform: scale(1.4); opacity: 0; }
     }
 
-    .card-info { padding: 20px; flex: 1; display: flex; flex-direction: column; }
-    .card-title { font-size: 1.2rem; font-weight: bold; color: var(--col-4-dark); margin-bottom: 8px; }
-    .card-meta { font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; font-family: monospace; }
-    .card-desc { font-size: 0.95rem; color: #666; line-height: 1.6; }
+    .label {
+        position: absolute;
+        top: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-family: var(--font-body-mixed);
+        font-size: 11px;
+        color: var(--ink-muted);
+        letter-spacing: 0.08em;
+        transition: color 0.3s ease;
+        pointer-events: none;
+    }
 
-    .play-icon {
-        margin-top: auto;
-        align-self: flex-start;
-        padding-top: 15px;
-        font-size: 0.9rem;
-        color: var(--col-4-dark);
-        font-weight: bold;
+    .star-point:hover .dot {
+        transform: scale(1.4);
+        box-shadow:
+            0 0 24px rgba(255, 255, 255, 1),
+            0 0 48px rgba(232, 184, 200, 0.7);
+    }
+    .star-point:hover .label { color: var(--ink); }
+
+    /* 信息浮卡 */
+    .info {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        min-width: 260px;
+        max-width: 320px;
+        padding: 18px 20px;
+        background: rgba(14, 18, 42, 0.88);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(180, 204, 228, 0.25);
+        border-radius: 4px;
+        opacity: 0;
+        transform: translate(-50%, 56px);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+        pointer-events: none;
+        z-index: 10;
+        text-align: left;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .star-point.flip-left .info {
+        left: auto;
+        right: 50%;
+        transform: translate(50%, 56px);
+    }
+
+    .star-point:hover .info {
+        opacity: 1;
+        transform: translate(-50%, 40px);
+        pointer-events: auto;
+    }
+    .star-point.flip-left:hover .info {
+        transform: translate(50%, 40px);
+    }
+
+    .info-tag {
+        display: inline-block;
+        font-family: var(--font-body-mixed);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        padding: 2px 8px;
+        border: 1px solid rgba(180, 204, 228, 0.3);
+        border-radius: 2px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .info h3 {
+        font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+        font-size: 20px;
+        font-weight: 400;
+        color: var(--ink);
+        margin-bottom: 4px;
+        letter-spacing: 0.02em;
+    }
+
+    .info-meta-top {
+        font-family: var(--font-body-mixed);
+        font-size: 11px;
+        color: var(--ink-muted);
+        letter-spacing: 0.04em;
+        margin-bottom: 12px;
+    }
+
+    .info p {
+        font-family: "LXGW WenKai", "LXGW WenKai Screen", serif;
+        font-size: 14px;
+        color: var(--ink);
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* 图例 */
+    .legend {
+        max-width: 900px;
+        margin: 40px auto 0;
+        padding-top: 20px;
+        border-top: 1px dashed rgba(180, 204, 228, 0.15);
         display: flex;
-        align-items: center;
-        gap: 5px;
-        opacity: 0.7;
+        justify-content: space-between;
+        font-family: var(--font-body-mixed);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--ink-muted);
+        text-transform: uppercase;
     }
-    .work-card:hover .play-icon { opacity: 1; }
+    .legend span::before {
+        content: "·";
+        margin-right: 8px;
+        color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dot::after { animation: none; }
+    }
 
     @media (max-width: 768px) {
-        .gallery-grid { grid-template-columns: 1fr; }
+        .chart { height: 500px; }
+        .info { min-width: 220px; max-width: 260px; }
     }
 </style>

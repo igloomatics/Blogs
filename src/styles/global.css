@@ -1,0 +1,151 @@
+/* ==========================================================================
+   src/styles/global.css
+   —— 全站基础：光标 / ::selection / 链接
+   —— 字体仍由 BaseLayout 的 <link> 加载（不在此处重复导入）
+   —— 颜色 token 在这里声明，作为 BaseLayout 既有变量的语义别名
+   ========================================================================== */
+
+:root {
+  --accent-cool:      #6b8db4;
+  --accent-warm:      #c88a9a;
+
+  --selection-bg:     #ddd3e5;
+  --selection-ink:    #3a3449;
+
+  --dark-accent:      #b4cce4;
+  --dark-accent-warm: #e8b8c8;
+}
+
+/* ===== Hide system cursor (replaced by custom cursor div) ===== */
+html, body { cursor: none; }
+
+/* Mobile / touch: disable custom cursor entirely */
+@media (pointer: coarse) {
+  html, body { cursor: auto; }
+  #igloo-cursor, #igloo-cursor-glow { display: none !important; }
+}
+
+/* Keep system cursor for text inputs so users can see where they're typing */
+input, textarea, [contenteditable] { cursor: text; }
+
+/* ===== ::selection —— 浅色页：薰衣草灰 / 深色页：柔蓝白 / 代码块：高对比 ===== */
+::selection       { background: var(--selection-bg); color: var(--selection-ink); text-shadow: none; }
+::-moz-selection  { background: var(--selection-bg); color: var(--selection-ink); text-shadow: none; }
+
+.dream-page ::selection,
+.dream-page ::-moz-selection {
+  background: rgba(180, 204, 228, 0.4);
+  color: #ffffff;
+  text-shadow: none;
+}
+
+pre ::selection, code ::selection,
+pre ::-moz-selection, code ::-moz-selection {
+  background: #3a4654;
+  color: #fdf9f0;
+  text-shadow: none;
+}
+
+.dream-page pre ::selection, .dream-page code ::selection,
+.dream-page pre ::-moz-selection, .dream-page code ::-moz-selection {
+  background: var(--dark-accent);
+  color: #0a0e26;
+  text-shadow: none;
+}
+
+/* ===== Links — 方案 A · 薄雾实线 ===== */
+a {
+  color: #7a8bb8;
+  text-decoration: none;
+  border-bottom: 1.5px solid rgba(160, 170, 210, 0.55);
+  padding-bottom: 1px;
+  transition: color 0.3s ease, border-bottom-color 0.3s ease, text-shadow 0.3s ease;
+}
+a:hover {
+  color: #9a8fc2;
+  border-bottom-color: rgba(160, 150, 200, 0.9);
+  text-shadow: 0 0 12px rgba(200, 180, 230, 0.6);
+}
+
+.dream-page a {
+  color: var(--dark-accent);
+  border-bottom: 1.5px solid rgba(180, 204, 228, 0.5);
+}
+.dream-page a:hover {
+  color: var(--dark-accent-warm);
+  border-bottom-color: rgba(232, 184, 200, 0.8);
+  text-shadow: 0 0 14px rgba(232, 184, 200, 0.55);
+}
+
+/* 某些功能性锚点不应显示虚线下划线（导航、tag、卡片标题、TOC、返回键等） */
+.tag,
+.nav-link,
+nav a,
+.post-title,
+.archive-title,
+.card-title,
+.card-link-wrapper,
+.toc-link,
+.play-icon,
+.dropbtn,
+.dropdown-content a,
+.back-button {
+  border-bottom: none !important;
+}
+
+/* ===== Custom cursor ===== */
+#igloo-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent-cool);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10000;
+  transition:
+    width 0.3s cubic-bezier(.2,.8,.2,1),
+    height 0.3s cubic-bezier(.2,.8,.2,1),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+#igloo-cursor.link {
+  width: 34px; height: 34px;
+  background: transparent;
+  border: 1.5px solid var(--accent-warm);
+}
+#igloo-cursor.click {
+  width: 6px; height: 6px;
+}
+
+/* Dark page variants */
+.dream-page #igloo-cursor {
+  background: var(--dark-accent);
+  box-shadow: 0 0 12px rgba(180, 204, 228, 0.6);
+}
+.dream-page #igloo-cursor.link {
+  background: transparent;
+  border-color: var(--dark-accent-warm);
+  box-shadow: 0 0 20px rgba(232, 184, 200, 0.5);
+}
+
+/* ===== Glow trail (only visible on dream page) ===== */
+#igloo-cursor-glow {
+  position: fixed;
+  top: 0; left: 0;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 184, 200, 0.35), transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.dream-page #igloo-cursor-glow { opacity: 1; }
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  #igloo-cursor, #igloo-cursor-glow { transition: none; }
+}

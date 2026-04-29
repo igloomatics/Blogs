@@ -12,7 +12,10 @@ interface Props {
 const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
 ---
 
-<BaseLayout title={`Post | ${title}`} activeNav={activeNav}>
+<BaseLayout title={`Post | ${title}`} activeNav={activeNav} sidebarMode="toc">
+    <!-- 把文章页注入的 toc slot 转发给 BaseLayout 的 sidebar-toc slot -->
+    <slot name="toc" slot="sidebar-toc" />
+
     <!-- 返回按钮喵 -->
     <a href="/time" class="back-button" title="返回时光页">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -20,11 +23,11 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
 
     <header class="post-header">
         <h1 class="post-title">{title}</h1>
-        
+
         <div class="post-meta">
-            <span class="meta-item">{date}</span>
+            <span class="meta-item post-meta-date">{date}</span>
             {words && <span class="meta-item">{words} Words</span>}
-            
+
             {tags.length > 0 && (
                 <div class="tags-container">
                     {tags.map(tag => (
@@ -35,17 +38,9 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
         </div>
     </header>
 
-    <div class="article-container">
-        <article class="article-content">
-            <slot />
-        </article>
-
-        <!-- 右侧悬浮目录 (Catalog) -->
-        <aside class="toc-sidebar">
-            <div class="toc-title">Catalog / 目录</div>
-            <slot name="toc" />
-        </aside>
-    </div>
+    <article class="article-content">
+        <slot />
+    </article>
 
     <!-- 底部导航 -->
     <div class="post-navigation">
@@ -87,7 +82,7 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
     .post-header {
         margin-top: 20px;
         margin-bottom: 40px;
-        border-bottom: 1px dashed var(--col-3-medium);
+        border-bottom: 1px dashed rgba(180, 170, 210, 0.35);
         padding-bottom: 30px;
     }
 
@@ -121,14 +116,7 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
         margin-left: 15px; 
     }
 
-    .article-container {
-        display: flex;
-        gap: 60px; 
-        align-items: flex-start;
-    }
-
     .article-content {
-        flex: 1; 
         min-width: 0;
         font-size: 1.05rem;
         color: #4a5a6a;
@@ -136,117 +124,175 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
         word-break: break-word;
     }
 
-    /* --- 纯净版分割线样式喵 --- */
+    /* --- 分割线 --- */
     .article-content hr {
         border: none;
-        border-top: 1px dashed var(--col-3-medium);
-        margin: 2.5rem 0;
-        opacity: 0.8;
+        border-top: 1px dashed rgba(180, 170, 210, 0.4);
+        margin: 2.8rem 0;
     }
 
+    /* --- h2 · 淡紫竖线 --- */
     .article-content h2 {
-        font-size: 1.6rem;
-        margin-top: 40px;
+        font-size: 1.55rem;
+        margin-top: 48px;
         margin-bottom: 20px;
         color: var(--text-main);
         position: relative;
-        padding-left: 15px;
+        padding-left: 18px;
+        letter-spacing: 0.02em;
     }
-
     .article-content h2::before {
         content: '';
-        position: absolute; left: 0; top: 5px; bottom: 5px;
-        width: 4px; background: var(--col-4-dark);
+        position: absolute;
+        left: 0; top: 8px; bottom: 8px;
+        width: 3px;
+        background: rgba(154, 143, 194, 0.7);
         border-radius: 2px;
     }
 
+    /* --- h3 · 极简 + 小星点装饰 --- */
     .article-content h3 {
-        font-size: 1.3rem;
-        margin-top: 30px;
-        margin-bottom: 15px;
+        font-size: 1.22rem;
+        margin-top: 34px;
+        margin-bottom: 14px;
         color: var(--text-main);
+        letter-spacing: 0.02em;
+        position: relative;
+        padding-left: 18px;
+    }
+    .article-content h3::before {
+        content: '✦';
+        position: absolute;
+        left: 0; top: 0;
+        color: rgba(154, 143, 194, 0.55);
+        font-size: 0.8em;
+        line-height: 1.5;
+    }
+
+    .article-content h4 {
+        font-size: 1.05rem;
+        margin-top: 26px;
+        margin-bottom: 10px;
+        color: var(--text-main);
+        font-weight: 600;
+        letter-spacing: 0.03em;
     }
 
     .article-content p { margin-bottom: 20px; }
 
-    /* --- 引用文本样式喵 --- */
-    .article-content blockquote {
-        margin: 2rem 0;
-        padding: 1rem 1.5rem;
-        background: rgba(185, 215, 234, 0.15);
-        border-left: 5px solid var(--col-3-medium);
-        border-radius: 0 8px 8px 0;
-        color: var(--text-main);
+    /* --- strong / em --- */
+    .article-content strong {
+        color: #5a4a78;
+        font-weight: 600;
+    }
+    .article-content em {
+        color: #6a7a9a;
         font-style: italic;
     }
 
+    /* --- 列表 · 自定义薰衣草小点 --- */
+    .article-content ul, .article-content ol {
+        padding-left: 1.5rem;
+        margin-bottom: 20px;
+    }
+    .article-content ul { list-style: none; }
+    .article-content ul > li {
+        position: relative;
+        padding-left: 2px;
+        margin-bottom: 8px;
+    }
+    .article-content ul > li::before {
+        content: '·';
+        position: absolute;
+        left: -1.1rem;
+        color: rgba(154, 143, 194, 0.85);
+        font-size: 1.4em;
+        line-height: 1;
+        top: 0.05em;
+    }
+    .article-content ol { padding-left: 1.8rem; }
+    .article-content ol > li {
+        margin-bottom: 8px;
+    }
+    .article-content ol > li::marker {
+        color: rgba(154, 143, 194, 0.8);
+    }
+
+    /* --- 引用 --- */
+    .article-content blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.6rem;
+        background: rgba(221, 211, 229, 0.18);
+        border-left: 3px solid rgba(154, 143, 194, 0.55);
+        border-radius: 0 6px 6px 0;
+        color: #55556e;
+        font-style: italic;
+    }
     .article-content blockquote p {
         margin-bottom: 0;
     }
 
-    /* --- 行内代码样式喵 --- */
+    /* --- 行内代码 · 淡薰衣草底 --- */
     .article-content :not(pre) > code {
-        background: var(--col-2-light);
-        color: var(--col-4-dark);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 0.9em;
-        font-weight: bold;
+        background: rgba(221, 211, 229, 0.45);
+        color: #6a5a84;
+        padding: 1px 7px;
+        border-radius: 5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        border: 1px solid rgba(180, 170, 210, 0.25);
     }
 
+    /* --- 图片 --- */
     .article-content img {
         max-width: 100%;
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(118, 159, 205, 0.15);
-        margin: 20px 0;
-        border: 4px solid rgba(255,255,255,0.5);
+        box-shadow: 0 2px 14px rgba(160, 150, 200, 0.15);
+        margin: 24px 0;
+        border: 1px solid rgba(220, 220, 240, 0.5);
     }
 
-    /* TOC 样式 */
-    .toc-sidebar {
-        width: 180px; 
-        position: sticky;
-        top: 40px; 
-        flex-shrink: 0;
-        padding-left: 20px; 
-        background: transparent; 
-        border: none;
-        box-shadow: none;
+    /* --- 表格 --- */
+    .article-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 24px 0;
+        font-size: 0.95em;
+    }
+    .article-content th {
+        background: rgba(200, 180, 230, 0.22);
+        color: #5a4a78;
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+    .article-content td {
+        padding: 10px 14px;
+        border-top: 1px dashed rgba(180, 170, 210, 0.3);
+        color: var(--text-main);
+    }
+    .article-content tr:hover td {
+        background: rgba(221, 211, 229, 0.15);
     }
 
-    .toc-title {
-        font-size: 0.85rem;
-        font-weight: bold;
-        color: var(--text-light);
-        margin-bottom: 15px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        opacity: 0.8;
-    }
-
-    .toc-list { list-style: none; }
-    .toc-list li { margin-bottom: 10px; }
-
-    .toc-link {
-        color: var(--text-light);
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        display: block;
+    /* --- 键位 <kbd> --- */
+    .article-content kbd {
+        display: inline-block;
+        padding: 1px 7px;
+        font-family: ui-monospace, Menlo, monospace;
+        font-size: 0.85em;
+        color: #5a4a78;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(180, 170, 210, 0.4);
         border-radius: 4px;
-        padding: 2px 0;
-    }
-
-    .toc-link:hover, .toc-link.active {
-        color: var(--col-4-dark);
-        font-weight: bold;
     }
 
     /* 底部导航 */
     .post-navigation {
         margin-top: 80px;
         padding-top: 30px;
-        border-top: 1px dashed var(--col-3-medium);
+        border-top: 1px dashed rgba(180, 170, 210, 0.35);
         display: flex;
         justify-content: space-between;
         gap: 20px;
@@ -262,28 +308,31 @@ const { title, date, words, tags = [], activeNav = 'time' } = Astro.props;
     .nav-link:hover { transform: translateY(-3px); }
 
     .nav-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--text-light);
-        margin-bottom: 5px;
-        font-family: monospace;
+        margin-bottom: 6px;
+        font-family: var(--font-body-mixed);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
     }
 
     .nav-title {
-        font-size: 1.1rem;
-        color: var(--col-4-dark);
-        font-weight: bold;
+        font-size: 1.05rem;
+        color: #7a8bb8;
+        font-weight: 500;
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: color 0.25s ease, text-shadow 0.25s ease;
+    }
+
+    .nav-link:hover .nav-title {
+        color: #9a8fc2;
+        text-shadow: 0 0 12px rgba(200, 180, 230, 0.5);
     }
 
     .nav-link.next { align-items: flex-end; text-align: right; }
     .nav-link.prev { align-items: flex-start; text-align: left; }
-
-    @media (max-width: 1000px) {
-        .toc-sidebar { display: none; } 
-        .article-container { display: block; }
-    }
 
     @media (max-width: 768px) {
         .post-title { font-size: 1.8rem; }
