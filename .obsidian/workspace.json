@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "index"
             }
+          },
+          {
+            "id": "f27c356c588f32a5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "src/content/posts/The Bitter Lesson.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "The Bitter Lesson"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -160,6 +175,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:新建数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -168,15 +184,20 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "13ef33f729ae2e9c",
+  "active": "f27c356c588f32a5",
   "lastOpenFiles": [
-    "src/content/posts/代码测试.md",
-    "src/content/posts/回归RSS/Pasted image 20260302223105.png",
-    "src/content/posts/回归RSS/index.md",
     "src/content/posts/seeing-a-glowing-rabbit.md",
-    "src/content/posts/Markdown语法测试.md",
-    "src/content/posts/Lean4简介与安装教程.md",
+    "src/content/posts/The Bitter Lesson.md",
+    "src/content/posts/标题测试.md",
+    "src/content/posts/代码测试.md",
+    "src/content/posts/极乐迪斯科.md",
+    "src/content/posts/诗|亚洲铜.md",
+    "src/content/posts/诗|一切都被爱的恩典机器照看着.md",
     "src/content/posts/AI科研人网站导航.md",
+    "src/content/posts/Markdown语法测试.md",
+    "src/content/posts/回归RSS/index.md",
+    "src/content/posts/回归RSS/Pasted image 20260302223105.png",
+    "src/content/posts/Lean4简介与安装教程.md",
     "src/content/posts/回归RSS",
     "README.md"
   ]
