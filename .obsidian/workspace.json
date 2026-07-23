@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "src/content/posts/No Coffee, But Chat.md",
+                "file": "src/content/posts/梁文锋访谈.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "No Coffee, But Chat"
+              "title": "梁文锋访谈"
             }
           }
         ],
@@ -228,15 +228,17 @@
   },
   "active": "1b4577022af7c7a6",
   "lastOpenFiles": [
-    "src/content/posts/Markdown语法测试.md",
+    "src/content/posts/极乐迪斯科.md",
+    "src/content/posts/梁文锋访谈.md",
+    "src/content/posts/梁文锋访谈.md",
+    "src/content/posts/代码测试.md",
     "src/content/posts/No Coffee, But Chat.md",
+    "src/content/posts/Markdown语法测试.md",
     "src/content/posts/标题测试.md",
     "src/content/posts/回归RSS/index.md",
     "src/content/posts/陈星汉：让游戏成为连接人的艺术/index.md",
     "src/content/posts/LLM日常使用随笔一则.md",
     "src/content/posts/The Bitter Lesson.md",
-    "src/content/posts/代码测试.md",
-    "src/content/posts/极乐迪斯科.md",
     "src/content/posts/AI科研人网站导航.md",
     "src/content/posts/数学公式测试.md",
     "dist/server/manifest_DNhOtlpw.mjs",
