@@ -76,9 +76,23 @@
               "icon": "lucide-file",
               "title": "梁文锋访谈"
             }
+          },
+          {
+            "id": "9d6b02ce37b7fc40",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "src/content/posts/Deus ex machina.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Deus ex machina"
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -98,7 +112,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -226,21 +242,29 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "1b4577022af7c7a6",
+  "active": "9d6b02ce37b7fc40",
   "lastOpenFiles": [
-    "src/content/posts/极乐迪斯科.md",
-    "src/content/posts/梁文锋访谈.md",
-    "src/content/posts/梁文锋访谈.md",
-    "src/content/posts/代码测试.md",
+    "src/content/posts/The Bitter Lesson.md",
+    "src/content/posts/seeing-a-glowing-rabbit.md",
     "src/content/posts/No Coffee, But Chat.md",
+    "src/content/posts/AI科研人网站导航.md",
+    "src/content/posts/一切都被爱的恩典机器照看着.md",
+    "src/content/posts/亚洲铜.md",
+    "src/assets/profile.jpg",
+    "src/assets/thisisme.png",
+    "src/content/posts/陈星汉：让游戏成为连接人的艺术/光遇.png",
+    "src/content/posts/Deus ex machina.md",
+    "src/content/posts/Lean4简介与安装教程.md",
+    "src/content/posts/LLM日常使用随笔一则.md",
     "src/content/posts/Markdown语法测试.md",
+    "src/content/posts/数学公式测试.md",
+    "src/content/posts/梁文锋访谈.md",
+    "src/content/posts/梁文锋采访.md",
+    "src/content/posts/极乐迪斯科.md",
+    "src/content/posts/代码测试.md",
     "src/content/posts/标题测试.md",
     "src/content/posts/回归RSS/index.md",
     "src/content/posts/陈星汉：让游戏成为连接人的艺术/index.md",
-    "src/content/posts/LLM日常使用随笔一则.md",
-    "src/content/posts/The Bitter Lesson.md",
-    "src/content/posts/AI科研人网站导航.md",
-    "src/content/posts/数学公式测试.md",
     "dist/server/manifest_DNhOtlpw.mjs",
     "dist/client/_astro/讲座.D32yymxQ.jpg",
     "dist/client/_astro/受众四象限.BZBlENXl.jpg",
@@ -252,19 +276,12 @@
     "dist/client/_astro/_slug_.BPUn6ERa.css",
     "dist/client/_astro/Pasted image 20260302223105.DYV9L644.png",
     "dist/client/profile.jpg",
-    "dist/client/favicon.svg",
     "dist/client/favicon.ico",
     "dist/client/_astro",
     "dist/client",
     "dist/server/pages/api/likes.astro.mjs",
     "dist/server/pages/posts/_slug_.astro.mjs",
     "dist/server/pages/tags/_tag_.astro.mjs",
-    "dist/server/_astro/讲座.D32yymxQ.jpg",
-    "dist/server/_astro/受众四象限.BZBlENXl.jpg",
-    "src/content/posts/Lean4简介与安装教程.md",
-    "src/content/posts/诗|亚洲铜.md",
-    "src/content/posts/诗|一切都被爱的恩典机器照看着.md",
-    "src/content/posts/seeing-a-glowing-rabbit.md",
     "README.md"
   ]
 }
